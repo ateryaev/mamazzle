@@ -2,49 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
   font-family: fredoka;
   src: url("../public/fredoka-one.one-regular.otf") format("opentype");
 
 }
 
+*::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background: rgb(156 163 175);
+}
 
 * {
-  font-family: fredoka;
-}
-
-.field {
-  background: #ddd;
-  xwidth: 100px;
-  xheight: 100px;
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  width: fit-content;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid black;
-
-}
-
-.field>div {
-  display: flex;
-  width: 60px;
-  height: 60px;
-  border: 1px solid black;
-  color: black;
-  text-transform: lowercase;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
-
-}
-
-.field>div.selected {
-  background: black;
-  color: white;
-}
-
-.field>div.on {
-  text-transform: uppercase;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  user-select: none;
+  font-family: fredoka, Verdana, Geneva, Tahoma, sans-serif;
 }

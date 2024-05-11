@@ -1,9 +1,10 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Mamazzle",
+  "name": "Mamazzle Puzzle Game",
   "icons": [],
+  "orientation": "portrait",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#d1d5db",
+  "background_color": "#d1d5db"
 }
