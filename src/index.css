@@ -2,17 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: fredoka;
-  src: url("../public/fredoka-one.one-regular.otf") format("opentype");
-
-}
-
 *::-webkit-scrollbar {
   display: none;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
 body {
+  font-weight: 600;
+  font-family: fredoka, Verdana, Geneva, Tahoma, sans-serif;
   background: rgb(156 163 175);
 }
 
@@ -20,5 +18,5 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
   user-select: none;
-  font-family: fredoka, Verdana, Geneva, Tahoma, sans-serif;
+
 }

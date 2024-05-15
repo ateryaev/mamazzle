@@ -5,6 +5,6 @@
   "orientation": "portrait",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#d1d5db",
-  "background_color": "#d1d5db"
+  "theme_color": "#4b8",
+  "background_color": "#4b8"
 }

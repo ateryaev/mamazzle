@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useEffect } from "react";
 
-export function Window({ children }) {
+
+
+export function Title({ children, onBack }) {
+  function handleClick() {
+    window.scrollTo({ top: 0, behavior: 'smooth', });
+  }
   return (
-    <div className="shadow-md h-svh w-[360px] xmax-h-[1000px] bg-gray-300 overflow-y-auto">
-      <div className="flex flex-col gap-2 p-2">
+    <div onClick={handleClick}
+      className="justify-between bg-accent z-10 flex gap-2 p-4 -mx-2 top-0 sticky"
+    >
+      {onBack && <RoundButton onClick={onBack} isDark={true}><IconArrowBack /></RoundButton>}
+      <div className="text-white flex-1 justify-end flex items-center p-2 text-[24px] uppercase
+      data-[main=true]:justify-center data-[main=true]:text-center py-3" data-main={!onBack}>
         {children}
       </div>
     </div>
@@ -14,10 +23,10 @@ export function Button({ children, disabled, onClick }) {
     <button onClick={onClick}
       className="flex-1 flex  p-4 items-center
       min-h-[59px] justify-center
-      text-white text-opacity-90
-      bg-[#48b]
-      active:brightness-125
-      disabled:bg-gray-200 disabled:text-gray-300 "
+      text-white xxtext-opacity-90
+      bg-button
+      enabled:active:brightness-125
+      disabled:bg-gray-100 disabled:text-gray-400 "
       disabled={disabled}>
       {children}
     </button>)
@@ -28,11 +37,11 @@ export function RoundButton({ disabled, children, onClick, isDark }) {
       data-dark={isDark}
       className="rounded-full  aspect-square items-center flex justify-center
       text-xl border-8 h-[59px]
-      text-[#48b] border-[#48b] 
-      active:text-white active:bg-[#48b] active:brightness-125
+      text-gray-600 border-gray-600 
+      enabled:active:text-white enabled:active:bg-gray-600
       data-[dark=true]:text-white data-[dark=true]:border-white
       opacity-90
-      active:data-[dark=true]:text-accent active:data-[dark=true]:bg-white
+      enabled:active:data-[dark=true]:text-accent enabled:active:data-[dark=true]:bg-white
       disabled:opacity-20 disabled:saturate-0
       ">
       {children}
@@ -45,7 +54,7 @@ export function DotPages({ pageCount, currentPage, onClick }) {
     <div className="justify-center flex gap-2 p-2">
       {[...Array(pageCount)].map((_, index) => (
         <button className="w-2 aspect-square bg-gray-50 rounded-full
-        disabled:bg-gray-500"
+        disabled:bg-gray-600"
           key={index}
           onClick={() => onClick(index)}
           disabled={currentPage === index} />
@@ -60,9 +69,9 @@ export function ProgressBar({ percent }) {
     <Block>
       <BlockTitle>
         <div className="flex-1 pb-1">
-          <div className="text-gray-500 text-center">&nbsp;{Math.round(percent)}%</div>
+          <div className="text-gray-600 text-center">&nbsp;{Math.round(percent)}%</div>
           <div className="h-2 w-[100%] bg-gray-300">
-            <div className="h-2 bg-gray-500 transition-all w-1" style={{ width: percent + "%" }}></div>
+            <div className="h-2 bg-gray-600 transition-all w-1" style={{ width: percent + "%" }}></div>
           </div>
 
         </div>
@@ -70,28 +79,10 @@ export function ProgressBar({ percent }) {
     </Block>
   )
 }
-export function MainTitle({ children }) {
-  return (
-    <div className="shadow-md bg-accent p-[21px] text-white text-opacity-90 
-    text-2xl uppercase text-center">
-      {children}
-    </div>
-  )
-}
 
-export function Title({ children, onBack }) {
-  return (
-    <div className="shadow-md justify-between bg-accent flex gap-2 p-2">
-      <RoundButton onClick={onBack} isDark={true}><IconArrowBack /></RoundButton>
-      <div className="text-white text-opacity-90 flex-1 justify-end flex items-center p-2 text-[24px] uppercase">
-        {children}
-      </div>
-    </div>
-  )
-}
 export function BlockTitle({ children }) {
   return (
-    <div className="bg-gray-200 text-gray-500 p-2 h-[59px] flex justify-center items-center gap-2 uppercase">
+    <div className="bg-gray-200 text-gray-600 p-2 h-[59px] flex justify-center items-center gap-2 uppercase">
       {children}
     </div>
   )
@@ -105,7 +96,7 @@ export function BlockAlarm({ children }) {
 }
 export function BlockBody({ children }) {
   return (
-    <div className="text-gray-500 p-2 min-h-[59px]">
+    <div className="text-gray-500 p-2 min-h-[59px] font-normal">
       {children}
     </div>
   )

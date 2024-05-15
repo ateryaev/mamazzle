@@ -46,28 +46,35 @@ function nextPosiblePlaces(charPlaces, nextChar, chars) {
 
 function tryAddWord(word, chars, rndFunc) {
   let charPlaces = [];
+  let selection = [];
   for (let i = 0; i < word.length; i++) {
     const nextPlaces = nextPosiblePlaces(charPlaces, word.charAt(i), chars);
-    if (nextPlaces.length === 0) return chars;
+    if (nextPlaces.length === 0) return { chars, selection };
     const nextPlaceIndex = Math.floor(rndFunc() * nextPlaces.length);
     charPlaces.push(nextPlaces[nextPlaceIndex]);
   }
+
   charPlaces.forEach((pos, i) => {
     if (isEmptyCharAt(pos, chars)) {
       chars = setCharAt(pos, chars, word.charAt(i).toLowerCase());
     } else {
       chars = invertCaseAt(pos, chars);
     }
+    selection.push(pos);
   });
-  return chars;
+  return { chars, selection };
 }
 
 export function createLevel(word, level) {
   console.log("createLevel", word, level)
-  let grid = " ".repeat(COLS * ROWS);
+  let chars = " ".repeat(COLS * ROWS);
+  let solution = [];
   const rndFunc = splitmix32(level + word.charCodeAt(0) + word.charCodeAt(1));
   for (let i = 0; i < level + 1; i++) {
-    grid = tryAddWord(word, grid, rndFunc);
+    let trial = tryAddWord(word, chars, rndFunc);
+    if (trial.selection.length === 0) continue;
+    chars = trial.chars;
+    solution.push(trial.selection);
   }
-  return grid;
+  return { chars, solution };
 }

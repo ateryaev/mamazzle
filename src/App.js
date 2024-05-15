@@ -1,24 +1,34 @@
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState, forceUpdate } from "react";
 import { PageLevels } from "./PageLevels"
 import { PageMain } from "./PageMain"
 import { PagePlay } from "./PagePlay"
-import { useParams, useNavigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Button, Title } from "./components/Ui";
+import { SaveLevelsSolved } from "./utils/GameData";
+import { Ctx } from "./Ctx";
+
+
 
 function App() {
-  const params = useParams();
 
+  const location = useLocation();
+  const [ctxCounter, setCtxCounter] = useState(0);
+
+  const ctx = useContext(Ctx);
+  function forceSolve(word, count) {
+    SaveLevelsSolved(word, count);
+    this.forceUpdate();
+  }
   return (
-    <div className="flex justify-center">
-      <Router>
-        <Routes>
-          <Route exact path="/" element=<PageMain /> />
-          <Route path="/play/:word" element=<PageLevels /> />
-          <Route path="/play/:word/:lvl" element=<PagePlay /> />
-        </Routes>
-      </Router>
-    </div>
+    <Ctx.Provider value={ctx}>
+      <Routes location={location} key={location.pathname}>
+        <Route exact path="/" element=<PageMain /> />
+        <Route path="/play/:word" element=<PageLevels /> />
+        <Route path="/play/:word/:lvl" element=<PagePlay /> />
+      </Routes>
+    </Ctx.Provider>
   );
 }
 

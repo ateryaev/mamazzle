@@ -10,6 +10,19 @@ export class ColRow {
     return (pos1.col - pos2.col) ** 2 + (pos1.row - pos2.row) ** 2;
   }
 
+  static minus(pos1, pos2) {
+    return { col: pos1.col - pos2.col, row: pos1.row - pos2.row }
+  }
+
+  static direction(pos) {
+    let dir = "";
+    if (pos.col > 0) dir += "right";
+    if (pos.row > 0) dir += "bottom";
+    if (pos.col < 0) dir += "left";
+    if (pos.row < 0) dir += "top";
+    return dir;
+  }
+
   static isSame(pos1, pos2) {
     return (pos1.col === pos2.col) && (pos1.row === pos2.row);
   }

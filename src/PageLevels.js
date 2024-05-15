@@ -1,9 +1,12 @@
-import { Window, Title, Block, BlockTitle, BlockBody, DotPages, Button } from "./components/Ui";
+import { Title, Block, BlockTitle, BlockBody, DotPages, Button } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
-import { LoadWordPage, SaveWordPage } from "./utils/GameData";
-import { useEffect, useRef, useState } from "react";
+import { GetWordAbout, LoadWordPage, SaveWordPage } from "./utils/GameData";
+import { useContext, useEffect, useRef, useState } from "react";
 import { LoadLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
+import { Blinker } from "./components/Blinker";
+import { Ctx } from "./Ctx";
+import { Window } from "./components/Window";
 
 const pageSize = 16;
 
@@ -11,10 +14,10 @@ function LevelButton({ num, active, unsolved, onSelect }) {
   const lvl = num.toString().padStart(2, '0');
   return (
     <Button onClick={() => active && onSelect(num)} disabled={!active}>
-      <div className="aspect-square bxg-red-100 flex-1 flex items-center justify-center">
+      <div className="aspect-square flex-1 flex items-center justify-center">
         <div>
           {lvl}
-          {active && unsolved && <div className="text-xs h-0 animate-pulse">new</div>}
+          {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-50" >new</Blinker>}
         </div>
       </div>
     </Button>
@@ -23,8 +26,6 @@ function LevelButton({ num, active, unsolved, onSelect }) {
 
 function LevelsPage({ start, solved, total, onSelect }) {
   const size = total - start < pageSize ? total - start : pageSize;
-  console.log(size);
-
   return (
     <div className="inline-block snap-start w-[100%] flex-1 aspect-square
     mr-4 p-0 snap-always">
@@ -55,7 +56,7 @@ export function PageLevels({ }) {
   const navigate = useNavigate();
 
   function handleBack() {
-    navigate('/');
+    navigate(-1);
   }
 
   function handlePlay(lvl) {
@@ -76,6 +77,7 @@ export function PageLevels({ }) {
     scroller.current.children[pageIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, [pageIndex]);
 
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setPageIndex(nextPageIndex);
@@ -88,14 +90,12 @@ export function PageLevels({ }) {
     setNextPageIndex(Math.round(nearestPage));
   }
 
-  return (
-    <Window>
-      <Title onBack={handleBack}>{routerParam.word}</Title>
-      <Block>
-        <BlockTitle>CHOOSE LEVELS</BlockTitle>
-      </Block>
-
-      <div className="overflow-x-auto text-nowrap snap-x snap-mandatory bg-white"
+  return (<Window onBack={handleBack} title={<>{routerParam.word}</>}>
+    <Block>
+      <BlockTitle>CHOOSE A LEVEL</BlockTitle>
+    </Block>
+    <div>
+      <div className="overflow-x-scroll text-nowrap snap-x snap-mandatory bg-white"
         onScroll={handleScroll} ref={scroller}>
         {[...Array(pageCount)].map((_, index) => (
           <LevelsPage
@@ -106,20 +106,13 @@ export function PageLevels({ }) {
             total={LEVELS_PER_WORD} />
         ))}
       </div>
-      <DotPages pageCount={pageCount} currentPage={pageIndex} onClick={changePage} />
+    </div>
+    <DotPages pageCount={pageCount} currentPage={pageIndex} onClick={changePage} />
 
-      <Block>
-        <BlockTitle>ABOUT</BlockTitle>
-        <BlockBody>
-          Some text about current word.
-          <br />As example:<br />
-          The practice of tattooing dates back thousands of
-          years and has been found in different cultures across
-          the globe. Studying the history of tattooing provides
-          insights into human culture, beliefs, and social
-          practices throughout history.
-        </BlockBody>
-      </Block>
-    </Window >
+    <Block>
+      <BlockTitle>ABOUT</BlockTitle>
+      <BlockBody>{GetWordAbout(routerParam.word)}</BlockBody>
+    </Block>
+  </Window>
   )
 }
