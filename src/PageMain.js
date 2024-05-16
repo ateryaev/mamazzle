@@ -32,7 +32,6 @@ export function PageMain({ }) {
 
   return (
     <Window title={<>mamazzle<br />puzzle</>}>
-      {/* <Title>mamazzle<br />puzzle</Title> */}
       <Block><BlockTitle>CHOOSE A WORD</BlockTitle></Block>
 
       <Block>

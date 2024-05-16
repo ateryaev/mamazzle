@@ -12,7 +12,9 @@ export class GamePlay {
       total++;
       if (chr === chr.toUpperCase()) solved++;
     }
-    return { total, solved };
+    let percent = 0;
+    if (total > 0) percent = Math.round(100 * (solved / total));
+    return { total, solved, percent };
   }
 
   static touchAt(pos, chars, selection) { //return new selection
@@ -59,7 +61,7 @@ export class GamePlay {
 
   static untouch(chars, word, selection) {
     const selectedWord = this.selectedWord(chars, selection).toUpperCase();
-    console.log(selectedWord, word.toUpperCase());
+    //console.log(selectedWord, word.toUpperCase());
     const solved = (selectedWord === word.toUpperCase());
     if (!solved) return chars;
     for (let pos of selection) {

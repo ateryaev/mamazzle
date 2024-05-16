@@ -14,8 +14,10 @@ import { Ctx } from "./Ctx";
 function App() {
 
   const location = useLocation();
+  const routerParam = useParams();
   const [ctxCounter, setCtxCounter] = useState(0);
 
+  console.log("LOC", routerParam)
   const ctx = useContext(Ctx);
   function forceSolve(word, count) {
     SaveLevelsSolved(word, count);

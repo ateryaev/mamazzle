@@ -1,7 +1,7 @@
 import { Title, Block, IconRedo, IconUndo, BlockTitle, RoundButton, ProgressBar, Button, BlockAlarm } from "./components/Ui";
 import { Board } from "./components/Board";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { GamePlay } from "./utils/GamePlay";
 import { LoadLevelHistory, LoadLevelsSolved, SaveLevelHistory, SaveLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
@@ -13,48 +13,41 @@ export function PagePlay({ onSolved }) {
   const navigate = useNavigate();
   const routerParam = useParams();
   //console.log("PAGE RENDER");
-  const word = routerParam.word;
-  const level = routerParam.lvl * 1;
-  const [solvedBefore, setSolvedBefore] = useState(false);
-  const [solved, setSolved] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+
   const [demoMode, setDemoMode] = useState(false);
+  const [demoStep, setDemoStep] = useState(0);
+
   const [history, setHistory] = useState(EMPTY_HISTORY);
   const [historySlot, setHistorySlot] = useState(0);
-  const [selectedWord, setSelectedWord] = useState("");
   const [selection, setSelection] = useState([]);
-  const [solution, setSolution] = useState([]);
+
+  const word = useMemo(() => routerParam.word, [routerParam.word]);
+  const level = useMemo(() => routerParam.lvl * 1, [routerParam.lvl]);
+  const chars = useMemo(() => history[historySlot], [history, historySlot]);
+  const selectedWord = useMemo(() => { return GamePlay.selectedWord(chars, selection) }, [selection, chars]);
+  const solvedBefore = useMemo(() => { return level < LoadLevelsSolved(word) }, [level, word]);
+  const solution = useMemo(() => LoadLevelHistory(word, level).solution, [word, level]);
+  const progress = useMemo(() => GamePlay.progress(chars).percent, [chars]);
+  const solved = useMemo(() => progress === 100, [progress]);
+  const loaded = useMemo(() => history[0] !== EMPTY_HISTORY[0], [history]);
+  const canDemo = useMemo(() => !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection]);
 
   useEffect(() => {
+    console.log("LAODING...", word, level);
     const h = LoadLevelHistory(word, level);
-    console.log("11111111", word, level, h.history[0], h.solution);
-    setSolution(h.solution);
-    setSolvedBefore(level < LoadLevelsSolved(word));
     setHistory(h.history);
     setHistorySlot(h.slot);
-    setLoaded(true);
-  }, [routerParam]);
+  }, [word, level]);
 
   useEffect(() => {
-    console.log("22222222:", loaded, history[0]);
+    console.log("SAVING...", word, level);
+    //console.log("22222222:", loaded, history[0]);
     if (!loaded) return;
 
     SaveLevelHistory(word, level, { history, slot: historySlot });
-    setSolved(progress === 100);
-    if (progress === 100) {
-      SaveLevelsSolved(word, level + 1);
-      setSolvedBefore(true);
-    }
-  }, [history, historySlot]);
+    if (solved) SaveLevelsSolved(word, level + 1);
 
-  const progress = useMemo(() => {
-
-    const prg = GamePlay.progress(history[historySlot]);
-    if (prg.total === 0) return 0;
-    const percent = 100 * (prg.solved / prg.total);
-    console.log("MEMO LOAD", percent);
-    return percent;
-  }, [history, historySlot])
+  }, [word, level, historySlot]);
 
   function handleSwap(newChars) {
     let newHistory = history.slice(0, historySlot + 1);
@@ -64,63 +57,51 @@ export function PagePlay({ onSolved }) {
   }
 
   function handleSelectEnd() {
-    const newChars = GamePlay.untouch(history[historySlot], word, selection);
+    const newChars = GamePlay.untouch(chars, word, selection);
     setSelection([]);
-    setSelectedWord("");
-    if (newChars !== history[historySlot]) handleSwap(newChars);
+    if (newChars !== chars) handleSwap(newChars);
   }
+
   function handleSelecting(pos) {
-    const newSelection = GamePlay.touchAt(pos, history[historySlot], selection);
-    setSelectedWord(GamePlay.selectedWord(history[historySlot], selection));
+    const newSelection = GamePlay.touchAt(pos, chars, selection);
     setSelection(newSelection);
   }
-  function handleUndo() {
-    setHistorySlot(historySlot - 1);
-  }
-  function handleRedo() {
-    setHistorySlot(historySlot + 1);
-  }
-  function handleBack() {
-    navigate(-1);
-  }
-  function restart() {
-    setSolved(false);
-    setHistorySlot(0);
-  }
-  function goNext() {
-    navigate(`/play/${word}/${level + 1}`, { replace: true });
-  }
-  const [demoStep, setDemoStep] = useState(0);
+
+  function handleUndo() { setHistorySlot(historySlot - 1); }
+  function handleRedo() { setHistorySlot(historySlot + 1); }
+  function handleBack() { navigate(-1); }
+  function restart() { setHistorySlot(0); }
+  function goNext() { navigate(`/play/${word}/${level + 1}`, { replace: true }); }
 
   useEffect(() => {
     if (!demoMode) return;
-    const stepLen = word.length + 2;
+    const stepLen = word.length + 1;
     const solutionIndex = Math.floor(demoStep / stepLen);
     const subIndex = demoStep % stepLen;
 
     const tmo = setTimeout(() => {
-      if (demoStep >= solution.length * stepLen || progress === 100) {
+      if (demoStep >= solution.length * stepLen || solved) {
         clearInterval(tmo);
         console.log("DEMO OVER!");
         setDemoMode(false);
-        setDemoStep(0);
         return;
       }
 
-      if (subIndex > 0 && subIndex < stepLen - 1) {
-        const pos = solution[solutionIndex][subIndex - 1];
-        handleSelecting(pos);
-      }
-      if (subIndex === stepLen - 1) {
+      setDemoStep(demoStep + 1);
+
+      if (subIndex < stepLen - 1) {
+        console.log("DEMO MOVE:", solution[solutionIndex][subIndex], subIndex)
+        handleSelecting(solution[solutionIndex][subIndex]);
+      } else {
         handleSelectEnd();
       }
-      setDemoStep(demoStep + 1);
-    }, (subIndex === 0 || subIndex === stepLen - 1) ? 500 : 100);
+    }, (subIndex === word.length) ? 300 : (subIndex === 1 ? 200 : 100));
 
     return () => clearTimeout(tmo);
   }, [demoMode, demoStep, selection, solution]);
 
   function showMeHow() {
+    setDemoStep(0);
     setDemoMode(!demoMode);
   }
   return (
@@ -155,11 +136,10 @@ export function PagePlay({ onSolved }) {
         </BlockTitle>
       </Block>}
 
-      {/* <Board chars={history[historySlot]} word={word} onSwap={handleSwap} onSelect={handleSelect} /> */}
-      <Board chars={history[historySlot]} word={word} selection={selection}
+      <Board chars={chars} word={word} selection={selection}
         onSelecting={handleSelecting} onSelectEnd={handleSelectEnd} readonly={demoMode || solved} />
 
-      {historySlot === 0 && selection.length === 0 &&
+      {canDemo &&
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">
           <Button onClick={showMeHow}>
             <div>SHOW ME HOW TO PLAY
@@ -168,7 +148,7 @@ export function PagePlay({ onSolved }) {
           </Button>
         </div>}
 
-      {solved &&
+      {solved && !demoMode &&
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">
           <Button onClick={restart}>RESTART</Button>
           <Button onClick={goNext}>
@@ -176,12 +156,14 @@ export function PagePlay({ onSolved }) {
               <Blinker className="text-xs h-0 opacity-50 -translate-y-1 block">tap</Blinker></div></Button>
         </div>}
 
-      {!solved && (historySlot > 0 || selection.length > 0) &&
+      {demoMode && !canDemo && <Block><BlockAlarm>DEMO MODE</BlockAlarm></Block>}
+      {!demoMode && !canDemo && !solved && < ProgressBar percent={progress} />}
+
+      {/* {!solved && (historySlot > 0 || selection.length > 0) &&
         <>
-          {demoMode && <Block><BlockAlarm>DEMO MODE</BlockAlarm></Block>}
           {!demoMode && <ProgressBar percent={progress} />}
         </>
-      }
+      } */}
 
       <div className="flex justify-center gap-2 p-2 xbg-white">
         <RoundButton disabled={historySlot === 0 || demoMode} onClick={handleUndo}>

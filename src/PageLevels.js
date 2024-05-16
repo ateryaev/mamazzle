@@ -59,6 +59,10 @@ export function PageLevels({ }) {
     navigate(-1);
   }
 
+  useEffect(() => {
+    console.log("W", routerParam.word);
+  }, [routerParam.word]);
+
   function handlePlay(lvl) {
     navigate(`./${lvl}`);
   }

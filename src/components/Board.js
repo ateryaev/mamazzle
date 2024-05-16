@@ -67,8 +67,6 @@ function IconArrowRight() {
   );
 }
 
-//////////////////////////////////////////////////////////////////////////////
-
 export function Board({ chars, selection, onSelecting, onSelectEnd, readonly }) {
   const fieldRef = useRef(null);
 
