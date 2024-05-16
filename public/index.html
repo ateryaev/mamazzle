@@ -3,14 +3,30 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=360px, user-scalable=0" />
+  <meta name="viewport" content="width=360, user-scalable=0" id="viewportMeta" />
   <meta name="theme-color" content="#296" />
   <meta name="description" content="Mamazzle puzzle progressive web application game" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
   <title>Mamazzle</title>
 </head>
 
-<body class="flex justify-center min-h-svh">
+<script>
+  const maxRatio = 0.55;
+  const defaultWidth = 360.0;
+  let currentRatio = 0;
+  window.onresize = () => {
+    const ratio = window.outerWidth / window.outerHeight;
+    if (ratio === currentRatio) return;
+    currentRatio = ratio;
+    let newWidth = ratio > maxRatio ? defaultWidth * ratio / maxRatio : defaultWidth;
+    newWidth = Math.round(newWidth);
+    const newContent = `width=${newWidth}, user-scalable=0`;
+    document.getElementById("viewportMeta").content = newContent;
+  }
+  window.onresize();
+</script>
+
+<body class="flex justify-center">
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 </body>

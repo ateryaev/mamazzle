@@ -23,7 +23,7 @@ export function GetWordAbout(word) {
 }
 
 export function LoadLevelsSolved(word) {
-  console.log("SOLVED", word)
+  //console.log("SOLVED", word)
   if (data.progress[word]) {
     return data.progress[word];
   }
