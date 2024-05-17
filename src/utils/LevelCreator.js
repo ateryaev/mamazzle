@@ -66,7 +66,7 @@ function tryAddWord(word, chars, rndFunc) {
 }
 
 export function createLevel(word, level) {
-  console.log("createLevel", word, level)
+  //console.log("createLevel", word, level)
   let chars = " ".repeat(COLS * ROWS);
   let solution = [];
   const rndFunc = splitmix32(level + word.charCodeAt(0) + word.charCodeAt(1));

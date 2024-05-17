@@ -59,14 +59,18 @@ export class GamePlay {
     return selection.map((pos) => getCharAt(pos, chars)).join("");
   }
 
+  static invert(chars, selection) {
+    for (let pos of selection) {
+      chars = invertCaseAt(pos, chars);
+    }
+    return chars;
+  }
+
   static untouch(chars, word, selection) {
     const selectedWord = this.selectedWord(chars, selection).toUpperCase();
     //console.log(selectedWord, word.toUpperCase());
     const solved = (selectedWord === word.toUpperCase());
     if (!solved) return chars;
-    for (let pos of selection) {
-      chars = invertCaseAt(pos, chars);
-    }
-    return chars;
+    return this.invert(chars, selection);
   }
 }

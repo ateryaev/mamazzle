@@ -1,11 +1,10 @@
-import { Title, Block, BlockTitle, BlockBody, DotPages, Button } from "./components/Ui";
+import { Block, BlockTitle, BlockBody, DotPages, Button } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
 import { GetWordAbout, LoadWordPage, SaveWordPage } from "./utils/GameData";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LoadLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { Blinker } from "./components/Blinker";
-import { Ctx } from "./Ctx";
 import { Window } from "./components/Window";
 
 const pageSize = 16;
@@ -17,7 +16,7 @@ function LevelButton({ num, active, unsolved, onSelect }) {
       <div className="aspect-square flex-1 flex items-center justify-center">
         <div>
           {lvl}
-          {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-50" >new</Blinker>}
+          {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-90" >new</Blinker>}
         </div>
       </div>
     </Button>

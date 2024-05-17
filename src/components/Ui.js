@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 
 
@@ -64,16 +64,28 @@ export function DotPages({ pageCount, currentPage, onClick }) {
 }
 
 export function ProgressBar({ percent }) {
+  const period = 4;
+  const [render, setRender] = useState(0);
+  useEffect(() => {
+    setRender(percent);
+  }, [])
+  useEffect(() => {
+    const tmo = setTimeout(() => {
+      if (Math.round(render - percent) === 0) return;
+      const step = render > percent ? -1 : 1;
+      setRender(render + step);
+    }, period);
+    return () => clearTimeout(tmo);
+  }, [render, percent]);
 
   return (
     <Block>
       <BlockTitle>
         <div className="flex-1 pb-1">
-          <div className="text-gray-600 text-center">&nbsp;{Math.round(percent)}%</div>
+          <div className="text-gray-600 text-center">&nbsp;{Math.round(render)}%</div>
           <div className="h-2 w-[100%] bg-gray-300">
-            <div className="h-2 bg-gray-600 transition-all w-1" style={{ width: percent + "%" }}></div>
+            <div className="h-2 bg-gray-600 w-1" style={{ width: render + "%" }}></div>
           </div>
-
         </div>
       </BlockTitle>
     </Block>

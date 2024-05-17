@@ -1,7 +1,7 @@
-import { Block, BlockTitle, BlockBody, Button, Title } from "./components/Ui";
+import { Block, BlockTitle, BlockBody, Button } from "./components/Ui";
 import { Window } from "./components/Window";
 import { useNavigate } from "react-router-dom";
-import { GetGameWords, GetGameWords2, LeftToUnlock } from "./utils/GameData";
+import { GetGameWords, LeftToUnlock } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { LoadLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
@@ -14,7 +14,7 @@ function WordButton({ word, solved, total, leftToUnlock, onClick }) {
     <Button onClick={onClick} disabled={disabled}>
       <div className="uppercase flex-1 text-left xfont-bold">
         {word}
-        {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 opacity-50 lowercase -translate-y-1">new</Blinker>}
+        {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 opacity-90 lowercase -translate-y-1">new</Blinker>}
         {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px]">solve {leftToUnlock} to unlock</div>}
       </div>
       {!disabled && <div className="">{solved}/{total}</div>}

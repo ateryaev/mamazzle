@@ -6,6 +6,7 @@ import { GamePlay } from "./utils/GamePlay";
 import { LoadLevelHistory, LoadLevelsSolved, SaveLevelHistory, SaveLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
+import { IconBxsHandUp } from "./components/Icons";
 
 const EMPTY_HISTORY = [" ".repeat(25)];
 
@@ -13,31 +14,35 @@ export function PagePlay({ onSolved }) {
   const navigate = useNavigate();
   const routerParam = useParams();
   //console.log("PAGE RENDER");
+  const word = routerParam.word;
+  const level = routerParam.lvl * 1;
 
   const [demoMode, setDemoMode] = useState(false);
   const [demoStep, setDemoStep] = useState(0);
 
-  const [history, setHistory] = useState(EMPTY_HISTORY);
-  const [historySlot, setHistorySlot] = useState(0);
+  const [history, setHistory] = useState(LoadLevelHistory(word, level).history);
+  const [historySlot, setHistorySlot] = useState(LoadLevelHistory(word, level).slot);
+
   const [selection, setSelection] = useState([]);
 
-  const word = useMemo(() => routerParam.word, [routerParam.word]);
-  const level = useMemo(() => routerParam.lvl * 1, [routerParam.lvl]);
+  const solution = useMemo(() => LoadLevelHistory(word, level).solution, [word, level]);
+
+
   const chars = useMemo(() => history[historySlot], [history, historySlot]);
   const selectedWord = useMemo(() => { return GamePlay.selectedWord(chars, selection) }, [selection, chars]);
   const solvedBefore = useMemo(() => { return level < LoadLevelsSolved(word) }, [level, word]);
-  const solution = useMemo(() => LoadLevelHistory(word, level).solution, [word, level]);
-  const progress = useMemo(() => GamePlay.progress(chars).percent, [chars]);
-  const solved = useMemo(() => progress === 100, [progress]);
+
+  const progress = useMemo(() => GamePlay.progress(GamePlay.invert(chars, selection)).percent, [chars, selection]);
+  const solved = useMemo(() => GamePlay.progress(chars).percent === 100, [chars]);
   const loaded = useMemo(() => history[0] !== EMPTY_HISTORY[0], [history]);
   const canDemo = useMemo(() => !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection]);
 
-  useEffect(() => {
-    console.log("LAODING...", word, level);
-    const h = LoadLevelHistory(word, level);
-    setHistory(h.history);
-    setHistorySlot(h.slot);
-  }, [word, level]);
+  // useEffect(() => {
+  //   console.log("LAODING...", word, level);
+  //   const h = LoadLevelHistory(word, level);
+  //   setHistory(h.history);
+  //   setHistorySlot(h.slot);
+  // }, [word, level]);
 
   useEffect(() => {
     console.log("SAVING...", word, level);
@@ -114,12 +119,12 @@ export function PagePlay({ onSolved }) {
       </div>
     </div>}>
 
-      {solved && selectedWord.length === 0 &&
+      {solved &&
         <Block>
           <BlockAlarm>Congratulation</BlockAlarm>
         </Block>}
 
-      {(!solved || selectedWord.length > 0) && <Block>
+      {!solved && <Block>
         <BlockTitle>
           {selectedWord.length > 0 && word.split("").map((char, index) => (
             <div key={index}
@@ -142,8 +147,9 @@ export function PagePlay({ onSolved }) {
       {canDemo &&
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">
           <Button onClick={showMeHow}>
-            <div>SHOW ME HOW TO PLAY
-              <Blinker className="text-xs opacity-50 h-0 -translate-y-1 block">tap</Blinker>
+            <div>
+              SHOW ME HOW TO PLAY
+              <Blinker className="text-sm opacity-90 h-0 mt-[-2px] block"><IconBxsHandUp className="mx-auto" /></Blinker>
             </div>
           </Button>
         </div>}
@@ -152,12 +158,15 @@ export function PagePlay({ onSolved }) {
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">
           <Button onClick={restart}>RESTART</Button>
           <Button onClick={goNext}>
-            <div>NEXT
-              <Blinker className="text-xs h-0 opacity-50 -translate-y-1 block">tap</Blinker></div></Button>
+            <div>
+              NEXT
+              <Blinker className="text-sm opacity-90 h-0 mt-[-2px] block"><IconBxsHandUp className="mx-auto" /></Blinker>
+            </div>
+          </Button>
         </div>}
 
       {demoMode && !canDemo && <Block><BlockAlarm>DEMO MODE</BlockAlarm></Block>}
-      {!demoMode && !canDemo && !solved && < ProgressBar percent={progress} />}
+      {!demoMode && !canDemo && !solved && <ProgressBar percent={progress} />}
 
       {/* {!solved && (historySlot > 0 || selection.length > 0) &&
         <>
