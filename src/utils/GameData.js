@@ -1,14 +1,12 @@
 import { createLevel } from "./LevelCreator";
-
-
+import { GamePlay } from "./GamePlay"
 
 //data.progress to save to localStorage
-
 let data = { history: {}, progress: {}, page: {} };
 
 export function GetGameWords() {
-  //console.log("GetGameWords...9292929292")
-  return ["mama", "radar", "cocoa", "bamboo", "coffee"/*, "cocos", "coffee", "raccoon", "tartar"*/];
+  //Ideas: "cocos", "coffee", "raccoon", "tartar"
+  return ["mama", "radar", "cocoa", "bamboo", "coffee"];
 }
 
 export function GetWordAbout(word) {
@@ -27,8 +25,27 @@ export function LoadLevelsSolved(word) {
   if (data.progress[word]) {
     return data.progress[word];
   }
+  if (word === "mama") return 48;
+  if (word === "radar") return 31;
+  if (word === "cocoa") return 7;
   return 0;
 }
+
+export function SaveLevelsSolved(word, levels) {
+  //console.log("SaveLevelsSolved...", { word, levels });
+  const oldProgress = LoadLevelsSolved(word);
+  if (levels > oldProgress) {
+    console.log("NEW LEVEL SOLVED!", word, levels);
+    data.progress[word] = levels;
+  }
+}
+
+
+function Load(field, word, defaultValue) { if (!data[field]) data[field] = {}; return data[field].hasOwnProperty(word) ? data[field][word] : defaultValue; }
+function Save(field, word, value) { if (!data[field]) data[field] = {}; data[field][word] = value; }
+
+export function LoadLastPlayed(word) { return Load("lastPlayed", word, -1); }
+export function SaveLastPlayed(word, level) { Save("lastPlayed", word, level); }
 
 export function TotalLevelsSolved() {
   const words = GetGameWords();
@@ -46,27 +63,6 @@ export function LeftToUnlock(levelIndex) {
   return solved >= needed ? 0 : needed - solved;
 }
 
-export function SaveLevelsSolved(word, levels) {
-  //console.log("SaveLevelsSolved...", { word, levels });
-  const oldProgress = LoadLevelsSolved(word);
-  if (levels > oldProgress) {
-    console.log("NEW LEVEL SOLVED!", word, levels);
-    data.progress[word] = levels;
-  }
-}
-
-export function LoadWordPage(word) {
-  //console.log("LoadWordPage...", word)
-  if (data.page[word]) {
-    return data.page[word];
-  }
-  return 0;
-}
-export function SaveWordPage(word, page) {
-  //console.log("SaveWordPage...", { word, page })
-  data.page[word] = page;
-}
-
 export function LoadLevelHistory(word, level) {
   const levelData = createLevel(word, level);
 
@@ -80,5 +76,12 @@ export function LoadLevelHistory(word, level) {
 }
 
 export function SaveLevelHistory(word, level, { history, slot }) {
+  //console.log("SAVING...", { word, level })
   data.history[word + " " + level] = { history: history.slice(), slot };
+
+  if (GamePlay.progress(history[slot]).percent === 100) {
+    //console.log("SAVING SOLVED...", { word, level })
+    SaveLevelsSolved(word, level + 1);
+  }
+
 }

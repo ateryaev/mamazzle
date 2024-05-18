@@ -1,6 +1,6 @@
-import { Block, BlockTitle, BlockBody, DotPages, Button } from "./components/Ui";
+import { Block, BlockTitle, BlockBody, DotPages, Button, BlockAlarm } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
-import { GetWordAbout, LoadWordPage, SaveWordPage } from "./utils/GameData";
+import { GetWordAbout, LoadLastPlayed } from "./utils/GameData";
 import { useEffect, useRef, useState } from "react";
 import { LoadLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
@@ -9,22 +9,27 @@ import { Window } from "./components/Window";
 
 const pageSize = 16;
 
-function LevelButton({ num, active, unsolved, onSelect }) {
+function LevelButton({ num, active, unsolved, isLast, onSelect }) {
   const lvl = num.toString().padStart(2, '0');
   return (
     <Button onClick={() => active && onSelect(num)} disabled={!active}>
       <div className="aspect-square flex-1 flex items-center justify-center">
-        <div>
+        <div className="flex-1">
           {lvl}
           {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-90" >new</Blinker>}
         </div>
       </div>
+      {isLast &&
+        <div className="w-0 self-stretch opacity-50">
+          <div className="bg-white w-2 h-2 rounded-full -mt-2"></div>
+        </div>}
     </Button>
   )
 }
 
-function LevelsPage({ start, solved, total, onSelect }) {
+function LevelsPage({ start, solved, total, onSelect, lastPlayed }) {
   const size = total - start < pageSize ? total - start : pageSize;
+
   return (
     <div className="inline-block snap-start w-[100%] flex-1 aspect-square
     mr-4 p-0 snap-always">
@@ -33,6 +38,7 @@ function LevelsPage({ start, solved, total, onSelect }) {
           <LevelButton key={index}
             onSelect={onSelect}
             num={start + index}
+            isLast={lastPlayed === start + index}
             active={start + index <= solved}
             unsolved={start + index == solved} />
         ))}
@@ -45,41 +51,36 @@ function LevelsPage({ start, solved, total, onSelect }) {
 export function PageLevels({ }) {
   const routerParam = useParams();
 
+  const pageCount = Math.floor((LEVELS_PER_WORD + pageSize - 1) / pageSize);
+  const lastPlayed = LoadLastPlayed(routerParam.word);
+  const solvedCount = LoadLevelsSolved(routerParam.word);
+  let levelToFocus = 0;
+  if (lastPlayed >= 0) levelToFocus = lastPlayed;
+  else if (solvedCount > 0) levelToFocus = solvedCount - 1;
+  let currentPage = Math.floor(levelToFocus / pageSize);
+  if (currentPage >= pageCount) currentPage = pageCount - 1;
+
   const scroller = useRef(null);
 
-  const pageCount = Math.floor((LEVELS_PER_WORD + pageSize - 1) / pageSize);
-
-  const [pageIndex, setPageIndex] = useState(LoadWordPage(routerParam.word));
-  const [nextPageIndex, setNextPageIndex] = useState(LoadWordPage(routerParam.word));
+  const [pageIndex, setPageIndex] = useState(currentPage);
+  const [nextPageIndex, setNextPageIndex] = useState(currentPage);
 
   const navigate = useNavigate();
 
-  function handleBack() {
-    navigate(-1);
-  }
-
-  useEffect(() => {
-    console.log("W", routerParam.word);
-  }, [routerParam.word]);
-
-  function handlePlay(lvl) {
-    navigate(`./${lvl}`);
-  }
+  function handleBack() { navigate(-1); }
+  function handlePlay(lvl) { navigate(`./${lvl}`); }
 
   function changePage(index) {
-    console.log("index", index);
     scroller.current.children[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   useEffect(() => {
-    scroller.current.children[LoadWordPage(routerParam.word)].scrollIntoView({ block: 'nearest' });
+    scroller.current.children[currentPage].scrollIntoView({ block: 'nearest' });
   }, []);
 
   useEffect(() => {
-    SaveWordPage(routerParam.word, pageIndex);
-    scroller.current.children[pageIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    changePage(pageIndex);
   }, [pageIndex]);
-
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -95,7 +96,8 @@ export function PageLevels({ }) {
 
   return (<Window onBack={handleBack} title={<>{routerParam.word}</>}>
     <Block>
-      <BlockTitle>CHOOSE A LEVEL</BlockTitle>
+      {solvedCount < LEVELS_PER_WORD && <BlockTitle>CHOOSE A LEVEL</BlockTitle>}
+      {solvedCount >= LEVELS_PER_WORD && <BlockAlarm>ALL LEVELS SOLVED</BlockAlarm>}
     </Block>
     <div>
       <div className="overflow-x-scroll text-nowrap snap-x snap-mandatory bg-white"
@@ -105,6 +107,7 @@ export function PageLevels({ }) {
             key={index}
             onSelect={handlePlay}
             start={index * pageSize}
+            lastPlayed={lastPlayed}
             solved={LoadLevelsSolved(routerParam.word)}
             total={LEVELS_PER_WORD} />
         ))}

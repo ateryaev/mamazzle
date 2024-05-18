@@ -1,14 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { ColRow } from "../utils/ColRow";
-import { GamePlay } from "../utils/GamePlay";
-import { IconUndo } from "./Ui";
 
 export function Item({ char, index, selected, selectionTo, ...props }) {
   const isEmpty = char == " ";
   const isOn = !isEmpty && char == char.toUpperCase();
 
-  return (<div {...props} className="text-[24px] aspect-square uppercase flex justify-center items-center 
-    border-8 border-gray-100 bg-gray-100
+  return (<div {...props} className="text-[24px] aspect-square uppercase flex 
+    justify-center items-center border-8 border-gray-100 bg-gray-100
   data-[state=on]:border-gray-600 data-[state=on]:text-gray-600
 
   data-[char=c3]:bg-pink-200
@@ -32,8 +30,7 @@ export function Item({ char, index, selected, selectionTo, ...props }) {
   "
     data-state={isOn ? "on" : isEmpty ? "" : "off"}
     data-selected={selected}
-    data-char={"c" + index}
-  >
+    data-char={"c" + index}>
 
     <div className="w-0 h-0 flex justify-center items-center">{char}</div>
     {!isEmpty && selectionTo && selectionTo !== "none" &&
@@ -45,22 +42,15 @@ export function Item({ char, index, selected, selectionTo, ...props }) {
         "
         data-selection={selectionTo}>
         <IconArrowRight />
-      </div>
-    }
-  </div >
+      </div>}
+
+  </div>
   );
 }
 function IconArrowRight() {
   return (
-    <svg
-      viewBox="0 0 16 16"
-      height="50px"
-      width="50px"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-
+    <svg viewBox="0 0 16 16" height="50px" width="50px"
+      fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path strokeWidth="3" stroke="rgb(0 0 0/0.1)" d="M4 8 L 12 8 l-2 2 m2 -2 l-2 -2" />
       <path strokeWidth="1.5" stroke="white" d="M4 8 L 12 8 l-2 2 m2 -2 l-2 -2" />
     </svg>
@@ -70,7 +60,7 @@ function IconArrowRight() {
 export function Board({ chars, selection, onSelecting, onSelectEnd, readonly }) {
   const fieldRef = useRef(null);
 
-  const [charClass, setCharClass] = useState({ "A": 0, "M": 1 });
+  const [charClass, setCharClass] = useState({}); //e.g. {"A": 0, "M": 1}
   useEffect(() => {
     let letters = {};
     let count = 0;
@@ -80,21 +70,9 @@ export function Board({ chars, selection, onSelecting, onSelectEnd, readonly }) 
         letters[key] = count;
         count++;
       }
-      setCharClass(letters); //{"A": 0, "M": 1} etc
-
+      setCharClass(letters);
     }
-    console.log(letters, letters["A"]);
-  }, [chars.toUpperCase()]);
-
-  function posFromEvent(e) {
-    const w = fieldRef.current.offsetWidth;
-    const x = e.pageX - fieldRef.current.offsetLeft;
-    const y = e.pageY - fieldRef.current.offsetTop;
-    const size = w / 5;
-    const col = Math.floor(x / size);
-    const row = Math.floor(y / size);
-    return { col, row };
-  }
+  }, []);
 
   function IsSelected(index) {
     for (let pos of selection) {
@@ -127,7 +105,10 @@ export function Board({ chars, selection, onSelecting, onSelectEnd, readonly }) 
   function handleMouseMove(e) {
     if (readonly) return;
     if (e.buttons === 0 && !e.touches) return;
-    const pos = posFromEvent(e.touches ? e.touches[0] : e);
+    let { pageX, pageY } = e.touches ? e.touches[0] : e;
+    pageX += fieldRef.current.parentElement.scrollLeft;
+    pageY += fieldRef.current.parentElement.scrollTop;
+    const pos = ColRow.fromEvent({ pageX, pageY }, fieldRef.current);
     onSelecting(pos);
   }
 

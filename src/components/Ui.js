@@ -64,11 +64,13 @@ export function DotPages({ pageCount, currentPage, onClick }) {
 }
 
 export function ProgressBar({ percent }) {
-  const period = 4;
+  const period = 1;
   const [render, setRender] = useState(0);
+
   useEffect(() => {
     setRender(percent);
-  }, [])
+  }, []);
+
   useEffect(() => {
     const tmo = setTimeout(() => {
       if (Math.round(render - percent) === 0) return;
@@ -115,7 +117,7 @@ export function BlockBody({ children }) {
 }
 export function Block({ children }) {
   return (
-    <div className="justify-between flex gap-2 p-2 flex-col bg-white">
+    <div className="justify-between flex gap-2 p-2 flex-col bg-white scroll-m-2">
       {children}
     </div>)
 }
