@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { beep, beepButton } from "../utils/Beep";
 
 
 
@@ -18,9 +19,16 @@ export function Title({ children, onBack }) {
     </div>
   )
 }
+
+
+
+
 export function Button({ children, disabled, onClick }) {
+
+
+  //onClick={onClick}
   return (
-    <button onClick={onClick}
+    <button onClick={() => { beepButton(); onClick() }}
       className="flex-1 flex  p-4 items-center
       min-h-[59px] justify-center
       text-white xxtext-opacity-90
@@ -33,14 +41,15 @@ export function Button({ children, disabled, onClick }) {
 }
 export function RoundButton({ disabled, children, onClick, isDark }) {
   return (
-    <button disabled={disabled} onClick={onClick}
+    <button disabled={disabled} onClick={() => { beepButton(); onClick() }}
+      //onMouseDown={() => beepButton()}
+      //onTouchStart={() => beepButton()}
       data-dark={isDark}
       className="rounded-full  aspect-square items-center flex justify-center
       text-xl border-8 h-[59px]
       text-gray-600 border-gray-600 
       enabled:active:text-white enabled:active:bg-gray-600
       data-[dark=true]:text-white data-[dark=true]:border-white
-      opacity-90
       enabled:active:data-[dark=true]:text-accent enabled:active:data-[dark=true]:bg-white
       disabled:opacity-20 disabled:saturate-0
       ">

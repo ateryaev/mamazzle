@@ -25,6 +25,7 @@ function WordButton({ word, solved, total, leftToUnlock, onClick }) {
 export function PageMain({ }) {
   const navigate = useNavigate();
 
+
   function handleClick(word) {
     navigate(`/play/${word}`);
   }

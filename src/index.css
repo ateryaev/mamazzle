@@ -8,10 +8,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
 
-body {
+html {
   font-weight: 600;
   font-family: fredoka, Verdana, Geneva, Tahoma, sans-serif;
   background: rgb(156 163 175);
+  touch-action: manipulation;
 }
 
 * {

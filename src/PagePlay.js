@@ -8,6 +8,7 @@ import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
 import { IconBxsHandUp } from "./components/Icons";
 import { LEVELS_PER_WORD } from "./utils/Config";
+import { beepSwipe, beepSwipeComplete } from "./utils/Beep";
 
 
 export function PagePlay({ onSolved }) {
@@ -50,11 +51,20 @@ export function PagePlay({ onSolved }) {
   function handleSelectEnd() {
     const newChars = GamePlay.untouch(chars, word, selection);
     setSelection([]);
-    if (newChars !== chars) addSlot(newChars);
+    if (newChars !== chars) {
+      addSlot(newChars);
+      beepSwipeComplete();
+    }
   }
 
   function handleSelecting(pos) {
+    const preLength = selection.length;
     const newSelection = GamePlay.touchAt(pos, chars, selection);
+    //console.log("SWIPE", newSelection.length, selection.length)
+    if (newSelection.length != preLength) {
+      beepSwipe();
+      console.log("SWIPE")
+    }
     setSelection(newSelection);
   }
 
