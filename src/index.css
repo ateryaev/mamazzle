@@ -21,3 +21,11 @@ html {
   user-select: none;
 
 }
+
+.rainbow {
+  background-image: linear-gradient(to right bottom,
+      rgb(165 243 252) 25%,
+      rgb(217 249 157) 25% 50%,
+      rgb(253 230 138) 50% 75%,
+      rgb(251 207 232) 75%);
+}

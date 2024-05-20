@@ -5,8 +5,8 @@ import { GamePlay } from "./GamePlay"
 let data = { history: {}, progress: {}, page: {} };
 
 export function GetGameWords() {
-  //Ideas: "cocos", "coffee", "raccoon", "tartar"
-  return ["mama", "radar", "cocoa", "bamboo", "coffee"];
+  //Ideas: "cocos", "coffee", "raccoon", "tartar", "alpha"
+  return ["mama", "radar", "cocoa", "alpha", "bamboo", "coffee"];
 }
 
 export function GetWordAbout(word) {
@@ -67,12 +67,13 @@ export function LoadLevelHistory(word, level) {
   const levelData = createLevel(word, level);
 
   if (data.history[word + " " + level]) {
-    return { ...data.history[word + " " + level], solution: levelData.solution };
+    return { ...data.history[word + " " + level], solution: levelData.solution, mods: levelData.mods };
   }
 
   const history = [levelData.chars];
   const slot = 0;
-  return { history, slot, solution: levelData.solution };
+  //console.log("LOADING...", levelData.mods)
+  return { history, slot, solution: levelData.solution, mods: levelData.mods };
 }
 
 export function SaveLevelHistory(word, level, { history, slot }) {

@@ -29,3 +29,45 @@ export function IconBxsHandUp(props) {
     </svg>
   );
 }
+
+export function IconAsterisk(props) {
+  return (
+    <svg
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={4}
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M12 6v12M17.196 9L6.804 15M6.804 9l10.392 6" />
+    </svg>
+  );
+}
+
+export function IconBxsLockAlt(props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      height="1em"
+      width="1em"
+      {...props}
+    >
+      <path d="M20 12c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z" />
+    </svg>
+  );
+}
+
+export function IconArrowRight() {
+  return (
+    <svg viewBox="0 0 16 16" height="50px" width="50px"
+      fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path strokeWidth="3" stroke="rgb(0 0 0/0.1)" d="M4 8 L 12 8 l-2 2 m2 -2 l-2 -2" />
+      <path strokeWidth="2" stroke="white" d="M4 8 L 12 8 l-2 2 m2 -2 l-2 -2" />
+    </svg>
+  );
+}

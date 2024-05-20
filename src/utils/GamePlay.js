@@ -55,22 +55,35 @@ export class GamePlay {
     return selection.slice(0);
   }
 
-  static selectedWord(chars, selection) {
-    return selection.map((pos) => getCharAt(pos, chars)).join("");
+  static selectedWord(chars, selection, mods) {
+    //if ()
+    return selection.map((pos) => {
+      if (mods && getCharAt(pos, mods) === "*") return "*";
+      return getCharAt(pos, chars);
+    }).join("");
   }
 
-  static invert(chars, selection) {
+  static invert(chars, selection, mods) {
     for (let pos of selection) {
+      if (getCharAt(pos, mods) === "#") continue;
       chars = invertCaseAt(pos, chars);
     }
     return chars;
   }
 
-  static untouch(chars, word, selection) {
-    const selectedWord = this.selectedWord(chars, selection).toUpperCase();
+  static untouch(chars, word, selection, mods) {
+    const selectedWord = this.selectedWord(chars, selection, mods).toUpperCase();
     //console.log(selectedWord, word.toUpperCase());
-    const solved = (selectedWord === word.toUpperCase());
+    let finalWord = "";
+    selectedWord.split("").forEach((char, index) => {
+      if (char === "*") {
+        char = word.charAt(index);
+      }
+      finalWord += char;
+    });
+    //console.log(selectedWord, finalWord, word);
+    const solved = (finalWord.toUpperCase() === word.toUpperCase());
     if (!solved) return chars;
-    return this.invert(chars, selection);
+    return this.invert(chars, selection, mods);
   }
 }

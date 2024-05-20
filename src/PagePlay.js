@@ -22,15 +22,16 @@ export function PagePlay({ onSolved }) {
   const [demoStep, setDemoStep] = useState(0);
 
   const [history, setHistory] = useState(LoadLevelHistory(word, level).history);
+  const [mods, setMods] = useState(LoadLevelHistory(word, level).mods);
   const [historySlot, setHistorySlot] = useState(LoadLevelHistory(word, level).slot);
 
   const [selection, setSelection] = useState([]);
   const solution = useMemo(() => LoadLevelHistory(word, level).solution, [word, level]);
 
   const chars = useMemo(() => history[historySlot], [history, historySlot]);
-  const selectedWord = useMemo(() => { return GamePlay.selectedWord(chars, selection) }, [selection, chars]);
+  const selectedWord = useMemo(() => { return GamePlay.selectedWord(chars, selection, mods) }, [selection, chars, mods]);
   const solvedBefore = useMemo(() => { return level < LoadLevelsSolved(word) }, [level, word]);
-  const progress = useMemo(() => GamePlay.progress(GamePlay.invert(chars, selection)).percent, [chars, selection]);
+  const progress = useMemo(() => GamePlay.progress(GamePlay.invert(chars, selection, mods)).percent, [chars, selection]);
   const solved = useMemo(() => GamePlay.progress(chars).percent === 100, [chars]);
   const canDemo = useMemo(() => !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection]);
 
@@ -49,7 +50,7 @@ export function PagePlay({ onSolved }) {
   }
 
   function handleSelectEnd() {
-    const newChars = GamePlay.untouch(chars, word, selection);
+    const newChars = GamePlay.untouch(chars, word, selection, mods);
     setSelection([]);
     if (newChars !== chars) {
       addSlot(newChars);
@@ -129,7 +130,7 @@ export function PagePlay({ onSolved }) {
           {selectedWord.length > 0 && word.split("").map((char, index) => (
             <div key={index}
               data-empty={index >= selectedWord.length}
-              data-invalid={selectedWord.charAt(index).toLowerCase() !== word.charAt(index).toLowerCase()}
+              data-invalid={selectedWord.charAt(index) !== "*" && selectedWord.charAt(index).toLowerCase() !== word.charAt(index).toLowerCase()}
               className="aspect-square uppercase bg-gray-600 text-gray-50 w-[30px] flex justify-center items-center
               data-[empty=true]:bg-gray-50 data-[empty=true]:text-gray-200
               data-[empty=false]:data-[invalid=true]:bg-red-600">
@@ -141,7 +142,7 @@ export function PagePlay({ onSolved }) {
         </BlockTitle>
       </Block>}
 
-      <Board chars={chars} word={word} selection={selection}
+      <Board chars={chars} mods={mods} word={word} selection={selection}
         onSelecting={handleSelecting} onSelectEnd={handleSelectEnd} readonly={demoMode || solved} />
 
       {canDemo &&

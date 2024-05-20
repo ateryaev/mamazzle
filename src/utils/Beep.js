@@ -1,7 +1,8 @@
 let actx = null;
 
 export function beep(vol, freq, duration) {
-  if (!actx) actx = new AudioContext();
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  //new AudioContext();
   let osc = actx.createOscillator();
   let gn = actx.createGain();
   osc.connect(gn)

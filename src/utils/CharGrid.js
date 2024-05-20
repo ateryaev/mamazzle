@@ -1,5 +1,21 @@
 import { COLS } from "./Config";
 
+
+// class GridItem {
+//   constructor() {
+
+//   }
+
+//   getType() {
+//     return "char";
+//   }
+// }
+// class Grid {
+//   constructor() {
+
+//   }
+// }
+
 export function isSameCharAt(pos, chars, char) {
   return getCharAt(pos, chars).toLowerCase() === char.toLowerCase();
 }

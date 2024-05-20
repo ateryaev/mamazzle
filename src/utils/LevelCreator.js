@@ -1,5 +1,5 @@
 import { ColRow } from "./ColRow";
-import { isEmptyCharAt, isSameCharAt, setCharAt, invertCaseAt } from "./CharGrid";
+import { isEmptyCharAt, isSameCharAt, setCharAt, invertCaseAt, getCharAt } from "./CharGrid";
 import { COLS, ROWS, NEIBS } from "./Config";
 
 function splitmix32(a) {
@@ -14,7 +14,7 @@ function splitmix32(a) {
   }
 }
 
-function nextPosiblePlaces(charPlaces, nextChar, chars) {
+function nextPosiblePlaces(charPlaces, nextChar, chars, mods) {
   let nextPositions = [];
   let allNextPosition = [];
 
@@ -36,19 +36,20 @@ function nextPosiblePlaces(charPlaces, nextChar, chars) {
     const isUsed = charPlaces.find((p) => ColRow.isSame(p, pos));
     const isValid = ColRow.isValid(pos);
     const isSameChar = isSameCharAt(pos, chars, nextChar);
+    const isAnyMod = isSameCharAt(pos, mods, "*");
 
-    if (isValid && !isUsed && (isEmpty || isSameChar)) {
+    if (isValid && !isUsed && (isEmpty || isSameChar || isAnyMod)) {
       nextPositions.push(pos);
     }
   }
   return nextPositions;
 }
 
-function tryAddWord(word, chars, rndFunc) {
+function tryAddWord(word, chars, rndFunc, mods) {
   let charPlaces = [];
   let selection = [];
   for (let i = 0; i < word.length; i++) {
-    const nextPlaces = nextPosiblePlaces(charPlaces, word.charAt(i), chars);
+    const nextPlaces = nextPosiblePlaces(charPlaces, word.charAt(i), chars, mods);
     if (nextPlaces.length === 0) return { chars, selection };
     const nextPlaceIndex = Math.floor(rndFunc() * nextPlaces.length);
     charPlaces.push(nextPlaces[nextPlaceIndex]);
@@ -68,13 +69,23 @@ function tryAddWord(word, chars, rndFunc) {
 export function createLevel(word, level) {
   //console.log("createLevel", word, level)
   let chars = " ".repeat(COLS * ROWS);
+  let mods = " ".repeat(COLS * ROWS);// * - any char; # - locked ON; ? - overwritten by first swipe
+
+  mods = setCharAt({ col: 0, row: 0 }, mods, "*");
+  mods = setCharAt({ col: 4, row: 0 }, mods, "*");
+  mods = setCharAt({ col: 4, row: 4 }, mods, "*");
+  mods = setCharAt({ col: 0, row: 4 }, mods, "*");
+  mods = setCharAt({ col: 2, row: 2 }, mods, "#");
+
   let solution = [];
   const rndFunc = splitmix32(level + word.charCodeAt(0) + word.charCodeAt(1));
   for (let i = 0; i < level + 1; i++) {
-    let trial = tryAddWord(word, chars, rndFunc);
+    let trial = tryAddWord(word, chars, rndFunc, mods);
     if (trial.selection.length === 0) continue;
     chars = trial.chars;
     solution.push(trial.selection);
   }
-  return { chars, solution };
+
+  chars = setCharAt({ col: 2, row: 2 }, chars, getCharAt({ col: 2, row: 2 }, chars).toUpperCase());
+  return { chars, solution, mods };
 }
