@@ -11,8 +11,8 @@
 html {
   font-weight: 600;
   font-family: fredoka, Verdana, Geneva, Tahoma, sans-serif;
-  background: rgb(156 163 175);
   touch-action: manipulation;
+  background-color: #000;
 }
 
 * {
@@ -23,6 +23,7 @@ html {
 }
 
 .rainbow {
+  xxfilter: brightness(1.0) saturate(1.5) contrast(1.2);
   background-image: linear-gradient(to right bottom,
       rgb(165 243 252) 25%,
       rgb(217 249 157) 25% 50%,

@@ -6,6 +6,7 @@ import { LEVELS_PER_WORD } from "./utils/Config";
 import { LoadLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Item } from "./components/Board";
+import { IconBxsLockAlt } from "./components/Icons";
 
 function WordButton({ word, solved, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
@@ -17,7 +18,7 @@ function WordButton({ word, solved, total, leftToUnlock, onClick }) {
         {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px]">solve {leftToUnlock} to unlock</div>}
       </div>
       {!disabled && <div className="">{solved}/{total}</div>}
-      {disabled && <div className="text-xs">locked</div>}
+      {disabled && <div className=""><IconBxsLockAlt /> </div>}
     </Button>
   )
 }

@@ -1,25 +1,50 @@
 import { useState, useRef, useEffect, Fragment } from "react";
 import { ColRow } from "../utils/ColRow";
-import { IconArrowRight, IconAsterisk, IconBxsLockAlt } from "./Icons";
+import { IconArrowRight, IconAsterisk } from "./Icons";
 
-const TYPE_NORMAL = "normal";
-const TYPE_ANY = "any";
-const TYPE_LOCKED = "locked";
-
-export function Item({ char, index, selected, selectionTo, ...props }) {
+export function Item({ char, index, selected, selectionTo, readonly, ...props }) {
   const isEmpty = char == " ";
   const isOn = !isEmpty && char == char.toUpperCase();
+  const [counter, setCounter] = useState(0);
+  const [style, setStyle] = useState({});
 
-  return (<div {...props} className="text-[24px] aspect-square uppercase flex 
+  useEffect(() => {
+    if ((!readonly || isEmpty)) {
+      setStyle({});
+      return;
+    }
+    let tmo = setTimeout(() => {
+      const x = (Math.random() * 4 - 2);
+      const y = (Math.random() * 4 - 2);
+      const a = (Math.random() * 4 - 2);
+      const o = (Math.random() > 0.5 ? 100 : 70);
+      let newStyle = { ...style };//{translate:`${x}px ${y}px`, }
+      if (counter % 2 === 10) newStyle = { ...newStyle, rotate: `${a}deg` }
+      if (counter % 2 === 10) newStyle = { ...newStyle, translate: `${x}px ${y}px` }
+      //newStyle = { ...newStyle, opacity: `${o}%` }
+      newStyle = {}
+      if (Math.random() > 0.9) {
+        newStyle = { filter: "brightness(1.5)" }
+      } else {
+        newStyle = { rotate: `${a}deg`, translate: `${x}px ${y}px` }
+      }
+      setStyle(newStyle);
+
+      setCounter(counter + 1);
+    }, Math.random() * 1000 + 500)
+    return () => clearTimeout(tmo);
+  }, [readonly, counter]);
+
+  return (<div {...props} style={style} className="text-[24px] aspect-square uppercase flex 
     justify-center items-center border-8 border-gray-100 bg-gray-100
   data-[state=on]:border-gray-600 data-[state=on]:text-gray-600
-
   data-[char=c3]:bg-pink-200
   data-[char=c4]:bg-violet-200
   data-[char=c0]:bg-amber-200
   data-[char=c1]:bg-cyan-200
   data-[char=c2]:bg-lime-200
   data-[char=c5]:bg-red-200
+  tr transition-transform duration-1000
 
   data-[char=c3]:rounded-ss-[12px]
   data-[char=c2]:rounded-ee-[12px]
@@ -32,9 +57,11 @@ export function Item({ char, index, selected, selectionTo, ...props }) {
   data-[state=on]:data-[selected=true]:text-gray-50
   data-[state=off]:data-[selected=true]:bg-gray-400
   data-[state=off]:data-[selected=true]:text-gray-600
+  data-[readonly=true]:opacity-100
   "
     data-state={isOn ? "on" : isEmpty ? "" : "off"}
     data-selected={selected}
+    data-readonly={readonly}
     data-char={"c" + index}>
 
     <div className="w-0 h-0 flex justify-center items-center">
@@ -54,7 +81,7 @@ export function Item({ char, index, selected, selectionTo, ...props }) {
   );
 }
 
-export function ItemLocked({ char, index, selected, selectionTo, ...props }) {
+export function ItemLocked({ char, index, selected, selectionTo, readonly, ...props }) {
   const isEmpty = char == " ";
   const isOn = true;
 
@@ -85,7 +112,6 @@ export function ItemLocked({ char, index, selected, selectionTo, ...props }) {
   data-[char=c3]:data-[selected=true]:text-pink-300
   data-[char=c4]:data-[selected=true]:text-violet-300
   data-[char=c5]:data-[selected=true]:text-red-300
-
   "
     data-selected={selected}
     data-char={"c" + index}>
@@ -94,15 +120,10 @@ export function ItemLocked({ char, index, selected, selectionTo, ...props }) {
       <div className="w-10 h-10 border-dotted border-4  border-inherit"
         data-selected={selected}>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-      {/* <div className="w-6 h-6 translate-x-4 -translate-y-4 scale-50 flex justify-center items-center">
-        <IconBxsLockAlt /></div> */}
     </div>
     <div className="w-0 h-0 flex justify-center rotate-6 items-center">
       {char}
     </div>
-    {/* <div className="w-0 h-0 flex justify-center items-center">
-      {char}
-    </div> */}
     {!isEmpty && selectionTo && selectionTo !== "none" &&
       <div className="w-[60px] mx-[-30px] h-0 flex justify-center items-center 
         data-[selection=bottom]:rotate-90 data-[selection=bottom]:translate-y-[34px]
@@ -117,7 +138,7 @@ export function ItemLocked({ char, index, selected, selectionTo, ...props }) {
   );
 }
 
-export function ItemAny({ char, selected, selectionTo, type, ...props }) {
+export function ItemAny({ char, selected, selectionTo, type, readonly, ...props }) {
   const isEmpty = char === " ";
   const isOn = (char === char.toUpperCase());
 
@@ -165,7 +186,7 @@ export function ItemAny({ char, selected, selectionTo, type, ...props }) {
 
 
 
-export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readonly }) {
+export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readonly, solved }) {
   const fieldRef = useRef(null);
 
   const [charClass, setCharClass] = useState({}); //e.g. {"A": 0, "M": 1}
@@ -239,11 +260,11 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
     >
       {chars.split("").map((char, index) =>
         <Fragment key={index}>
-          {((mods.charAt(index) !== "*" && mods.charAt(index) !== "#") || char === " ") && <Item char={char} index={charClass[char.toUpperCase()]}
+          {((mods.charAt(index) !== "*" && mods.charAt(index) !== "#") || char === " ") && <Item char={char} readonly={solved} index={charClass[char.toUpperCase()]}
             selected={IsSelected(index)} selectionTo={SelectionTo(index)} />}
-          {mods.charAt(index) === "*" && char !== " " && <ItemAny char={char}
+          {mods.charAt(index) === "*" && char !== " " && <ItemAny readonly={solved} char={char}
             selected={IsSelected(index)} selectionTo={SelectionTo(index)} />}
-          {mods.charAt(index) === "#" && char !== " " && <ItemLocked char={char}
+          {mods.charAt(index) === "#" && char !== " " && <ItemLocked readonly={solved} char={char}
             selected={IsSelected(index)} selectionTo={SelectionTo(index)} index={charClass[char.toUpperCase()]} />}
 
         </Fragment>)}

@@ -6,12 +6,13 @@ import { GamePlay } from "./utils/GamePlay";
 import { LoadLevelHistory, LoadLevelsSolved, SaveLastPlayed, SaveLevelHistory } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
-import { IconBxsHandUp } from "./components/Icons";
+import { IconAsterisk, IconBxsHandUp } from "./components/Icons";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { beepSwipe, beepSwipeComplete } from "./utils/Beep";
+import { Selection } from "./components/Selection";
 
 
-export function PagePlay({ onSolved }) {
+export function PagePlay({ }) {
   const navigate = useNavigate();
   const routerParam = useParams();
   //console.log("PAGE RENDER");
@@ -33,7 +34,7 @@ export function PagePlay({ onSolved }) {
   const solvedBefore = useMemo(() => { return level < LoadLevelsSolved(word) }, [level, word]);
   const progress = useMemo(() => GamePlay.progress(GamePlay.invert(chars, selection, mods)).percent, [chars, selection]);
   const solved = useMemo(() => GamePlay.progress(chars).percent === 100, [chars]);
-  const canDemo = useMemo(() => !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection]);
+  const canDemo = useMemo(() => level < 6 && !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection]);
 
   function addSlot(newChars) {
     let newHistory = history.slice(0, historySlot + 1);
@@ -120,30 +121,13 @@ export function PagePlay({ onSolved }) {
       </div>
     </div>}>
 
-      {solved &&
-        <Block>
-          <BlockAlarm>Congratulation</BlockAlarm>
-        </Block>}
+      {solved && <Block><BlockAlarm><Blinker>Level Solved</Blinker></BlockAlarm></Block>}
 
-      {!solved && <Block>
-        <BlockTitle>
-          {selectedWord.length > 0 && word.split("").map((char, index) => (
-            <div key={index}
-              data-empty={index >= selectedWord.length}
-              data-invalid={selectedWord.charAt(index) !== "*" && selectedWord.charAt(index).toLowerCase() !== word.charAt(index).toLowerCase()}
-              className="aspect-square uppercase bg-gray-600 text-gray-50 w-[30px] flex justify-center items-center
-              data-[empty=true]:bg-gray-50 data-[empty=true]:text-gray-200
-              data-[empty=false]:data-[invalid=true]:bg-red-600">
-              {index < selectedWord.length ? selectedWord.charAt(index) : "?"}
-            </div>
-          ))
-          }
-          {selectedWord.length === 0 && <div className="uppercase">swipe over the word</div>}
-        </BlockTitle>
-      </Block>}
+      {!solved && <Selection selected={selectedWord} needed={word}></Selection>}
 
       <Board chars={chars} mods={mods} word={word} selection={selection}
-        onSelecting={handleSelecting} onSelectEnd={handleSelectEnd} readonly={demoMode || solved} />
+        onSelecting={handleSelecting} onSelectEnd={handleSelectEnd}
+        readonly={demoMode || solved} solved={solved} />
 
       {canDemo &&
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">

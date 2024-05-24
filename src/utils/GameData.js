@@ -6,7 +6,7 @@ let data = { history: {}, progress: {}, page: {} };
 
 export function GetGameWords() {
   //Ideas: "cocos", "coffee", "raccoon", "tartar", "alpha"
-  return ["mama", "radar", "cocoa", "alpha", "bamboo", "coffee"];
+  return ["mama", "radar", "cocoa", "bamboo", "coffee"];
 }
 
 export function GetWordAbout(word) {

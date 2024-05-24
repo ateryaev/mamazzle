@@ -1,18 +1,7 @@
 import { ColRow } from "./ColRow";
 import { isEmptyCharAt, isSameCharAt, setCharAt, invertCaseAt, getCharAt } from "./CharGrid";
 import { COLS, ROWS, NEIBS } from "./Config";
-
-function splitmix32(a) {
-  return function () {
-    a |= 0;
-    a = a + 0x9e3779b9 | 0;
-    let t = a ^ a >>> 16;
-    t = Math.imul(t, 0x21f0aaad);
-    t = t ^ t >>> 15;
-    t = Math.imul(t, 0x735a2d97);
-    return ((t = t ^ t >>> 15) >>> 0) / 4294967296;
-  }
-}
+import { splitmix32 } from "./Random";
 
 function nextPosiblePlaces(charPlaces, nextChar, chars, mods) {
   let nextPositions = [];
@@ -51,7 +40,7 @@ function tryAddWord(word, chars, rndFunc, mods) {
   for (let i = 0; i < word.length; i++) {
     const nextPlaces = nextPosiblePlaces(charPlaces, word.charAt(i), chars, mods);
     if (nextPlaces.length === 0) return { chars, selection };
-    const nextPlaceIndex = Math.floor(rndFunc() * nextPlaces.length);
+    const nextPlaceIndex = rndFunc(nextPlaces.length);
     charPlaces.push(nextPlaces[nextPlaceIndex]);
   }
 
@@ -66,19 +55,62 @@ function tryAddWord(word, chars, rndFunc, mods) {
   return { chars, selection };
 }
 
+function createMods(level, rndFunc) {
+  //48 levels
+  //0 0-7 - no mods
+  //1 8-15  -  #
+  //2 16-23 -  # *
+  //3 24-31 - ## *
+  //4 32-39 - ## **
+  //5 40-47 - ### ***
+  const hashNums = [0, 1, 1, 2, 2, 3];
+  const asteNums = [0, 0, 1, 1, 2, 3];
+  const hashCount = hashNums[Math.floor(level / 8)];
+  const asteCount = asteNums[Math.floor(level / 8)];
+  let mods = " ".repeat(COLS * ROWS);
+
+  for (let i = 0; i < hashCount; i++) {
+    const col = rndFunc(COLS);
+    const row = rndFunc(ROWS);
+    mods = setCharAt({ col, row }, mods, "#");
+  }
+  for (let i = 0; i < asteCount; i++) {
+    const col = rndFunc(COLS);
+    const row = rndFunc(ROWS);
+    mods = setCharAt({ col, row }, mods, "*");
+  }
+
+  return mods;
+}
+
+function finalizeChars(chars, mods, word, level, rndFunc) {
+  //fill all chars after lvl 16, capitalize all #
+  for (let col = 0; col < COLS; col++) {
+    for (let row = 0; row < ROWS; row++) {
+      const pos = { col, row };
+      const char = getCharAt(pos, chars);
+      const mod = getCharAt(pos, mods);
+      if (mod === "#") {
+        chars = setCharAt(pos, chars, char.toUpperCase());
+      }
+      if (char === " " && level > 15) {
+        const charIndex = rndFunc(word.length);
+        const newChar = word.charAt(charIndex)
+        chars = setCharAt(pos, chars, newChar.toUpperCase());
+      }
+    }
+  }
+  return chars;
+}
+
 export function createLevel(word, level) {
+  const rndFunc = splitmix32(level + word.charCodeAt(0) + word.charCodeAt(1));
+
   //console.log("createLevel", word, level)
   let chars = " ".repeat(COLS * ROWS);
-  let mods = " ".repeat(COLS * ROWS);// * - any char; # - locked ON; ? - overwritten by first swipe
-
-  mods = setCharAt({ col: 0, row: 0 }, mods, "*");
-  mods = setCharAt({ col: 4, row: 0 }, mods, "*");
-  mods = setCharAt({ col: 4, row: 4 }, mods, "*");
-  mods = setCharAt({ col: 0, row: 4 }, mods, "*");
-  mods = setCharAt({ col: 2, row: 2 }, mods, "#");
-
+  let mods = createMods(level, rndFunc);
   let solution = [];
-  const rndFunc = splitmix32(level + word.charCodeAt(0) + word.charCodeAt(1));
+
   for (let i = 0; i < level + 1; i++) {
     let trial = tryAddWord(word, chars, rndFunc, mods);
     if (trial.selection.length === 0) continue;
@@ -86,6 +118,6 @@ export function createLevel(word, level) {
     solution.push(trial.selection);
   }
 
-  chars = setCharAt({ col: 2, row: 2 }, chars, getCharAt({ col: 2, row: 2 }, chars).toUpperCase());
+  chars = finalizeChars(chars, mods, word, level, rndFunc);
   return { chars, solution, mods };
 }

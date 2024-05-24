@@ -10,9 +10,9 @@ export function Window({ children, title, onBack }) {
   }
 
   return (
-    <div className="shadow-md h-svh w-[360px] bg-gray-300 flex flex-col">
+    <div className="h-svh w-[360px] bg-gray-300 flex flex-col">
 
-      <div className="justify-between bg-accent flex gap-2 p-4 top-0 sticky 
+      <div className="justify-between bg-accent flex gap-2 p-4
         text-white text-[24px] uppercase" onClick={handleTitleClick}>
         {onBack && <RoundButton onClick={onBack} isDark={true}><IconArrowBack /></RoundButton>}
         <div className="flex-1 justify-end flex items-center p-2 text-[24px] uppercase
