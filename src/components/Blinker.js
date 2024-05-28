@@ -11,7 +11,7 @@ export function Blinker({ children, period, ...props }) {
   }, [counter]);
 
   return (
-    <span {...props} style={{ visibility: counter % 2 === 0 ? "hidden" : "visible" }}>
+    <span {...props} style={{ visibility: counter % 2 === 1 ? "hidden" : "visible" }}>
       {children}
     </span>
   )

@@ -2,7 +2,30 @@ import { createLevel } from "./LevelCreator";
 import { GamePlay } from "./GamePlay"
 
 //data.progress to save to localStorage
-let data = { history: {}, progress: {}, page: {} };
+let data = { history: {}, progress: {}, page: {}, settings: {} };
+
+function LoadAll() {
+  let val = localStorage.getItem('mamazzle_settings');
+  val = val ? JSON.parse(val) : { sound: true, vibro: true };
+  data.settings = val;
+  console.log("LOAD", data.settings, data.settings.sound);
+  data.loaded = true;
+}
+
+function SaveAll() {
+  console.log("SAVE", data.settings);
+  localStorage.setItem('mamazzle_settings', JSON.stringify(data.settings));
+}
+
+export function GetSettings() {
+  if (!data.loaded) LoadAll();
+  return data.settings;
+}
+
+export function UpdateSettings({ sound, vibro }) {
+  data.settings = { sound, vibro };
+  SaveAll();
+}
 
 export function GetGameWords() {
   //Ideas: "cocos", "coffee", "raccoon", "tartar", "alpha"

@@ -8,7 +8,7 @@ import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
 import { IconAsterisk, IconBxsHandUp } from "./components/Icons";
 import { LEVELS_PER_WORD } from "./utils/Config";
-import { beepSwipe, beepSwipeComplete } from "./utils/Beep";
+import { beepSolve, beepSwipe, beepSwipeCancel, beepSwipeComplete } from "./utils/Beep";
 import { Selection } from "./components/Selection";
 
 
@@ -36,6 +36,9 @@ export function PagePlay({ }) {
   const solved = useMemo(() => GamePlay.progress(chars).percent === 100, [chars]);
   const canDemo = useMemo(() => level < 6 && !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection]);
 
+  // useEffect(()=>{
+
+  // }, [solved])
   function addSlot(newChars) {
     let newHistory = history.slice(0, historySlot + 1);
     let newSlot = historySlot + 1;
@@ -52,19 +55,24 @@ export function PagePlay({ }) {
 
   function handleSelectEnd() {
     const newChars = GamePlay.untouch(chars, word, selection, mods);
-    setSelection([]);
+
     if (newChars !== chars) {
       addSlot(newChars);
       beepSwipeComplete();
+      if (GamePlay.progress(newChars).percent === 100) {
+        beepSolve();
+      }
+    } else if (selection.length > 1) {
+      beepSwipeCancel();
     }
+    setSelection([]);
   }
 
   function handleSelecting(pos) {
     const preLength = selection.length;
-    const newSelection = GamePlay.touchAt(pos, chars, selection);
-    //console.log("SWIPE", newSelection.length, selection.length)
+    const newSelection = GamePlay.touchAt(pos, chars, selection).slice(0, word.length);
     if (newSelection.length != preLength) {
-      beepSwipe();
+      beepSwipe(newSelection.length);
       console.log("SWIPE")
     }
     setSelection(newSelection);
@@ -121,7 +129,7 @@ export function PagePlay({ }) {
       </div>
     </div>}>
 
-      {solved && <Block><BlockAlarm><Blinker>Level Solved</Blinker></BlockAlarm></Block>}
+      {solved && <Block><BlockAlarm>Level Solved</BlockAlarm></Block>}
 
       {!solved && <Selection selected={selectedWord} needed={word}></Selection>}
 
@@ -130,7 +138,7 @@ export function PagePlay({ }) {
         readonly={demoMode || solved} solved={solved} />
 
       {canDemo &&
-        <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">
+        <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2 rounded-md">
           <Button onClick={showMeHow}>
             <div>
               SHOW ME HOW TO PLAY
@@ -140,7 +148,7 @@ export function PagePlay({ }) {
         </div>}
 
       {solved && !demoMode &&
-        <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2">
+        <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2 rounded-md">
           <Button onClick={restart}>RESTART</Button>
           <Button disabled={level + 1 >= LEVELS_PER_WORD} onClick={goNext}>
             <div>
@@ -151,7 +159,7 @@ export function PagePlay({ }) {
           </Button>
         </div>}
 
-      {demoMode && !canDemo && <Block><BlockAlarm>DEMO MODE</BlockAlarm></Block>}
+      {demoMode && !canDemo && <Block><BlockTitle>DEMO MODE</BlockTitle></Block>}
       {!demoMode && !canDemo && !solved && <ProgressBar percent={progress} />}
 
       <div className="flex justify-center gap-2 p-2 xbg-white">

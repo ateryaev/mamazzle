@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { beep, beepButton } from "../utils/Beep";
-
-
+import { useEffect, useRef, useState } from "react";
+import { beepButton, preBeepButton } from "../utils/Beep";
+import { IconStar } from "./Icons";
 
 export function Title({ children, onBack }) {
   function handleClick() {
@@ -24,26 +23,25 @@ export function Title({ children, onBack }) {
 
 
 export function Button({ children, disabled, onClick }) {
-
-
-  //onClick={onClick}
   return (
     <button onClick={() => { beepButton(); onClick() }}
+      onPointerDown={() => !disabled && preBeepButton()}
       className="flex-1 flex  p-4 items-center
-      min-h-[59px] justify-center
-      text-white xxtext-opacity-90
+      min-h-[59px] justify-center w-full
+      text-white
       bg-button
+      ro rounded-sm
       enabled:active:brightness-125
       disabled:bg-gray-100 disabled:text-gray-400 "
       disabled={disabled}>
       {children}
     </button>)
 }
+
 export function RoundButton({ disabled, children, onClick, isDark }) {
   return (
     <button disabled={disabled} onClick={() => { beepButton(); onClick() }}
-      //onMouseDown={() => beepButton()}
-      //onTouchStart={() => beepButton()}
+      onPointerDown={() => !disabled && preBeepButton()}
       data-dark={isDark}
       className="rounded-full  aspect-square items-center flex justify-center
       text-xl border-8 h-[59px]
@@ -94,8 +92,8 @@ export function ProgressBar({ percent }) {
       <BlockTitle>
         <div className="flex-1 pb-1">
           <div className="text-gray-600 text-center">&nbsp;{Math.round(render)}%</div>
-          <div className="h-2 w-[100%] bg-gray-300">
-            <div className="h-2 bg-gray-600 w-1" style={{ width: render + "%" }}></div>
+          <div className="h-2 w-[100%] bg-gray-300 rounded-md overflow-hidden">
+            <div className="h-2 bg-gray-600 w-1 rounded-md" style={{ width: render + "%" }}></div>
           </div>
         </div>
       </BlockTitle>
@@ -105,15 +103,59 @@ export function ProgressBar({ percent }) {
 
 export function BlockTitle({ children }) {
   return (
-    <div className="bg-gray-200 text-gray-600 p-2 h-[59px] flex justify-center items-center gap-2 uppercase">
+    <div className="bg-gray-200 rounded-sm text-gray-600 p-2 h-[59px] flex justify-center items-center gap-2 uppercase">
       {children}
     </div>
   )
 }
 export function BlockAlarm({ children }) {
+  const star1 = useRef(null);
+  const star2 = useRef(null);
+  const star3 = useRef(null);
+  const [step, setStep] = useState(0);
+  const scope = useRef(null)
+  //const [scope, animate] = useAnimate()
+
+
+  useEffect(() => {
+    const tmo = setTimeout(() => {
+
+      const list = scope.current.querySelectorAll("svg");
+      const idx = step % list.length;
+      let svg = list[idx];
+      const dx = Math.floor(Math.random() * 320 - 160);
+      const dy = 60;
+      const scale = Math.random();
+      svg.style.translate = `${dx}px ${dy}px`
+      svg.style.opacity = 0.5 * scale + 0.1;
+      svg.style.transition = "none";
+      svg.style.scale = scale + 0.5;
+
+      setTimeout(() => {
+        svg.style.opacity = 0;
+        svg.style.scale = (scale + 0.5) / 2.0;
+        svg.style.translate = `${dx}px ${dy - 90}px`
+        svg.style.transition = `all ${scale + 1}s`;
+      }, 10);
+      setStep(step + 1);
+      //setStep(step + 1);
+    }, 200);
+    return () => clearTimeout(tmo);
+  }, [step])
+
+
   return (
-    <div className="bg-gray-600 text-white p-2 h-[59px] flex justify-center items-center gap-2 uppercase">
-      {children}
+    <div className="bg-gray-600 overflow-hidden rounded-sm text-white p-2 h-[59px] flex justify-center items-center gap-0 uppercase">
+      <div className="h-0 w-0 whitespace-nowrap flex justify-center items-center">{children}</div>
+      <div ref={scope} className="h-0 flex justify-center items-center">
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+        <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />
+      </div>
     </div>
   )
 }
@@ -126,7 +168,7 @@ export function BlockBody({ children }) {
 }
 export function Block({ children }) {
   return (
-    <div className="justify-between flex gap-2 p-2 flex-col bg-white scroll-m-2">
+    <div className="justify-between flex gap-2 p-2 flex-col bg-white scroll-m-2 rounded-md">
       {children}
     </div>)
 }

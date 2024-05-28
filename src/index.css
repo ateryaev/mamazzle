@@ -23,7 +23,6 @@ html {
 }
 
 .rainbow {
-  xxfilter: brightness(1.0) saturate(1.5) contrast(1.2);
   background-image: linear-gradient(to right bottom,
       rgb(165 243 252) 25%,
       rgb(217 249 157) 25% 50%,

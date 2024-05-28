@@ -7,10 +7,12 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
   const isOn = !isEmpty && char == char.toUpperCase();
   const [counter, setCounter] = useState(0);
   const [style, setStyle] = useState({});
+  const [hilit, setHilit] = useState(false);
 
   useEffect(() => {
     if ((!readonly || isEmpty)) {
       setStyle({});
+      setHilit(false);
       return;
     }
     let tmo = setTimeout(() => {
@@ -24,8 +26,10 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
       //newStyle = { ...newStyle, opacity: `${o}%` }
       newStyle = {}
       if (Math.random() > 0.9) {
-        newStyle = { filter: "brightness(1.5)" }
+        //newStyle = { background: "white" }
+        setHilit(true);
       } else {
+        setHilit(false);
         newStyle = { rotate: `${a}deg`, translate: `${x}px ${y}px` }
       }
       setStyle(newStyle);
@@ -44,8 +48,9 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
   data-[char=c1]:bg-cyan-200
   data-[char=c2]:bg-lime-200
   data-[char=c5]:bg-red-200
-  tr transition-transform duration-1000
-
+  data-[glowed=true]:bg-opacity-30
+  data-[glowed=true]:scale-105
+  rounded-sm
   data-[char=c3]:rounded-ss-[12px]
   data-[char=c2]:rounded-ee-[12px]
   data-[char=c1]:rounded-se-[12px]
@@ -61,6 +66,7 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
   "
     data-state={isOn ? "on" : isEmpty ? "" : "off"}
     data-selected={selected}
+    data-glowed={hilit}
     data-readonly={readonly}
     data-char={"c" + index}>
 
@@ -95,7 +101,7 @@ export function ItemLocked({ char, index, selected, selectionTo, readonly, ...pr
   data-[char=c3]:bg-pink-300
   data-[char=c4]:bg-violet-300
   data-[char=c5]:bg-red-300
-
+  rounded-sm
   data-[selected=true]:bg-gray-600
   data-[selected=true]:text-cyan-300
   
@@ -232,9 +238,10 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
     fieldRef.current.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
   }, [])
 
-  function handleMouseMove(e) {
+  function handlePointer(e) {
+    //console.log("POINTER", e.buttons, e.touches, e.pageX)
     if (readonly) return;
-    if (e.buttons === 0 && !e.touches) return;
+    if (e.buttons === 0) return;
     let { pageX, pageY } = e.touches ? e.touches[0] : e;
     pageX += fieldRef.current.parentElement.scrollLeft;
     pageY += fieldRef.current.parentElement.scrollTop;
@@ -242,7 +249,7 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
     onSelecting(pos);
   }
 
-  function handleMouseUp() {
+  function handlePointerUp() {
     if (readonly) return;
     onSelectEnd();
   }
@@ -250,13 +257,11 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
   return (
     <div
       ref={fieldRef}
-      className="aspect-square select-none bg-white grid grid-cols-5 gap-2 p-2"
-      onMouseDown={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
-      onTouchStart={handleMouseMove}
-      onTouchMove={handleMouseMove}
-      onTouchEnd={handleMouseUp}
+      className="aspect-square select-none bg-white grid grid-cols-5 gap-2 p-2  rounded-md"
+      onPointerDown={handlePointer}
+      onPointerMove={handlePointer}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
       {chars.split("").map((char, index) =>
         <Fragment key={index}>

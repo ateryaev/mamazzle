@@ -31,8 +31,7 @@ function LevelsPage({ start, solved, total, onSelect, lastPlayed }) {
   const size = total - start < pageSize ? total - start : pageSize;
 
   return (
-    <div className="inline-block snap-start w-[100%] flex-1 aspect-square
-    mr-4 p-0 snap-always">
+    <div className="inline-block snap-start w-[100%] flex-1 aspect-square mr-4 snap-always">
       <div className="grid grid-cols-4 gap-2 p-2">
         {[...Array(size)].map((_, index) => (
           <LevelButton key={index}
@@ -100,7 +99,7 @@ export function PageLevels({ }) {
       {solvedCount >= LEVELS_PER_WORD && <BlockAlarm>ALL LEVELS SOLVED</BlockAlarm>}
     </Block>
     <div>
-      <div className="overflow-x-scroll text-nowrap snap-x snap-mandatory bg-white"
+      <div className="overflow-x-scroll text-nowrap snap-x snap-mandatory bg-white rounded-md"
         onScroll={handleScroll} ref={scroller}>
         {[...Array(pageCount)].map((_, index) => (
           <LevelsPage

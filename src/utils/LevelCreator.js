@@ -93,7 +93,7 @@ function finalizeChars(chars, mods, word, level, rndFunc) {
       if (mod === "#") {
         chars = setCharAt(pos, chars, char.toUpperCase());
       }
-      if (char === " " && level > 15) {
+      if (char === " " && level > 23) {
         const charIndex = rndFunc(word.length);
         const newChar = word.charAt(charIndex)
         chars = setCharAt(pos, chars, newChar.toUpperCase());

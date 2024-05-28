@@ -1,10 +1,21 @@
 {
   "short_name": "Mamazzle",
   "name": "Mamazzle Puzzle Game",
-  "icons": [],
+  "icons": [
+    {
+      "src": "mamazzle192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "mamazzle512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
   "orientation": "portrait",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000",
-  "background_color": "#000"
+  "theme_color": "#00f",
+  "background_color": "#f00"
 }
