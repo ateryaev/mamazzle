@@ -98,20 +98,20 @@ export function PageLevels({ }) {
       {solvedCount < LEVELS_PER_WORD && <BlockTitle>CHOOSE A LEVEL</BlockTitle>}
       {solvedCount >= LEVELS_PER_WORD && <BlockAlarm>ALL LEVELS SOLVED</BlockAlarm>}
     </Block>
-    <div>
-      <div className="overflow-x-scroll text-nowrap snap-x snap-mandatory bg-white rounded-md"
-        onScroll={handleScroll} ref={scroller}>
-        {[...Array(pageCount)].map((_, index) => (
-          <LevelsPage
-            key={index}
-            onSelect={handlePlay}
-            start={index * pageSize}
-            lastPlayed={lastPlayed}
-            solved={LoadLevelsSolved(routerParam.word)}
-            total={LEVELS_PER_WORD} />
-        ))}
-      </div>
+
+    <div className="overflow-x-scroll h-fit text-nowrap snap-x snap-mandatory bg-white rounded-md"
+      onScroll={handleScroll} ref={scroller}>
+      {[...Array(pageCount)].map((_, index) => (
+        <LevelsPage
+          key={index}
+          onSelect={handlePlay}
+          start={index * pageSize}
+          lastPlayed={lastPlayed}
+          solved={LoadLevelsSolved(routerParam.word)}
+          total={LEVELS_PER_WORD} />
+      ))}
     </div>
+
     <DotPages pageCount={pageCount} currentPage={pageIndex} onClick={changePage} />
 
     <Block>

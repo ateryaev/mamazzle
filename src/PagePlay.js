@@ -1,4 +1,5 @@
-import { Block, IconRedo, IconUndo, BlockTitle, RoundButton, ProgressBar, Button, BlockAlarm } from "./components/Ui";
+import { Block, BlockTitle, RoundButton, ProgressBar, Button, BlockAlarm } from "./components/Ui";
+import { IconRedo, IconUndo, IconBxsHandUp } from "./components/Icons"
 import { Board } from "./components/Board";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
@@ -6,7 +7,6 @@ import { GamePlay } from "./utils/GamePlay";
 import { LoadLevelHistory, LoadLevelsSolved, SaveLastPlayed, SaveLevelHistory } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
-import { IconAsterisk, IconBxsHandUp } from "./components/Icons";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { beepSolve, beepSwipe, beepSwipeCancel, beepSwipeComplete } from "./utils/Beep";
 import { Selection } from "./components/Selection";

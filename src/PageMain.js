@@ -13,7 +13,7 @@ function WordButton({ word, solved, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
   return (
     <Button onClick={onClick} disabled={disabled}>
-      <div className="uppercase flex-1 text-left xfont-bold">
+      <div className="uppercase flex-1 text-left">
         {word}
         {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 opacity-90 lowercase -translate-y-1">new</Blinker>}
         {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px]">solve {leftToUnlock} to unlock</div>}
@@ -54,7 +54,6 @@ export function PageMain({ }) {
             leftToUnlock={LeftToUnlock(index)}
             total={LEVELS_PER_WORD} onClick={() => handleClick(word)} />
         ))}
-
       </Block>
 
       <Block>
@@ -63,6 +62,7 @@ export function PageMain({ }) {
           Spot the word you're playing.
           Swipe over the word to connect nearest letters in any direction - up, down, left, or right.
           Swipe right to trigger a change in the state of all the letters in that word.
+
           <div className="grid grid-cols-4 gap-2 px-8 scale-50 font-bold">
             <Item char={"m"} index={0} selected={false} selectionTo={null} />
             <Item char={"A"} index={1} selected={false} selectionTo={null} />
@@ -119,18 +119,15 @@ export function PageMain({ }) {
       <Block>
         <BlockTitle>Settings</BlockTitle>
         <Button onClick={handleSoundSwitch}>
-          <div className="flex w-full">
-            <div className="flex-1 text-left">Sound effects</div>
-            <div>{sound ? "ON" : "OFF"}</div>
-          </div>
+          <div className="flex-1 text-left">Sound Effects</div>
+          <div>{sound ? "ON" : "OFF"}</div>
         </Button>
         <Button onClick={handleVibroSwitch}>
-          <div className="flex w-full">
-            <div className="flex-1 text-left">Vibration</div>
-            <div>{vibro ? "ON" : "OFF"}</div>
-          </div>
+          <div className="flex-1 text-left">Vibration</div>
+          <div>{vibro ? "ON" : "OFF"}</div>
         </Button>
       </Block>
+
     </Window>
   )
 }

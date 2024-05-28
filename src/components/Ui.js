@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { beepButton, preBeepButton } from "../utils/Beep";
-import { IconStar } from "./Icons";
+import { IconArrowBack, IconStar } from "./Icons";
 
 export function Title({ children, onBack }) {
   function handleClick() {
@@ -18,9 +18,6 @@ export function Title({ children, onBack }) {
     </div>
   )
 }
-
-
-
 
 export function Button({ children, disabled, onClick }) {
   return (
@@ -173,48 +170,3 @@ export function Block({ children }) {
     </div>)
 }
 
-function IconArrowBack(props) {
-  return (
-    <svg viewBox="0 0 512 512" fill="currentColor" height="1em" width="1em" {...props}>
-      <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={80}
-        d="M244 400L100 256l144-144M120 256h292" /></svg>
-  );
-}
-
-export function IconUndo(props) {
-  return (
-    <svg
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      viewBox="0 0 24 24"
-      height="1em"
-      width="1em"
-      {...props}
-    >
-      <path d="M3 7v6h6" />
-      <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" />
-    </svg>
-  );
-}
-
-export function IconRedo(props) {
-  return (
-    <svg
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      viewBox="0 0 24 24"
-      height="1em"
-      width="1em"
-      {...props}
-    >
-      <path d="M21 7v6h-6" />
-      <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7" />
-    </svg>
-  );
-}
