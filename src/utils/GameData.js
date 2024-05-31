@@ -1,38 +1,63 @@
 import { createLevel } from "./LevelCreator";
 import { GamePlay } from "./GamePlay"
+import { loadFromLocalStorage, readFromObject, saveToLocalStorage } from "./Storage";
 
-//data.progress to save to localStorage
-let data = { history: {}, progress: {}, page: {}, settings: {} };
+let data = { history: {}, progress: {}, page: {}, settings: {}, lastPlayed: {} };
 
-function LoadAll() {
-  let val = localStorage.getItem('mamazzle_settings');
-  val = val ? JSON.parse(val) : { sound: true, vibro: true };
-  data.settings = val;
-  console.log("LOAD", data.settings, data.settings.sound);
+export function getLastPlayed(word) { return readFromObject(data.lastPlayed, word, -1); }
+export function updateLastPlayed(word, level) { data.lastPlayed[word] = level; }
+
+function loadAll() {
+  if (data.loaded) return;
+  data.settings = loadFromLocalStorage('mamazzle_settings', { sound: true, vibro: true });
+  data.progress = loadFromLocalStorage('mamazzle_progress', {});
+  console.log("LOAD", data.settings, data.progress);
   data.loaded = true;
 }
 
-function SaveAll() {
-  console.log("SAVE", data.settings);
-  localStorage.setItem('mamazzle_settings', JSON.stringify(data.settings));
+function saveAll() {
+  console.log("SAVE", data.settings, data.progress);
+  saveToLocalStorage('mamazzle_settings', data.settings);
+  saveToLocalStorage('mamazzle_progress', data.progress);
 }
 
-export function GetSettings() {
-  if (!data.loaded) LoadAll();
+export function getSettings() {
+  loadAll();
   return data.settings;
 }
 
-export function UpdateSettings({ sound, vibro }) {
+export function updateSettings({ sound, vibro }) {
   data.settings = { sound, vibro };
-  SaveAll();
+  saveAll();
 }
 
-export function GetGameWords() {
-  //Ideas: "cocos", "coffee", "raccoon", "tartar", "alpha"
+export function getWords() {
   return ["mama", "radar", "cocoa", "bamboo", "coffee"];
 }
 
-export function GetWordAbout(word) {
+function getWordIndex(word) {
+  const words = getWords();
+  let index = -1;
+  for (let i = 0; i < words.length; i++) {
+    if (words[i] === word) {
+      index = i;
+      break;
+    }
+  }
+  return index;
+}
+
+export function isPlayable(word, level) {
+  if (`${level * 1}` !== `${level}`) return false;
+  level = level * 1;
+  if (level < 0) return false;
+  const index = getWordIndex(word);
+  if (index < 0 || getLeftToUnlock(index) > 0) return false;
+  const levelsSolved = getLevelsSolved(word);
+  return (level <= levelsSolved);
+}
+
+export function getWordAbout(word) {
   switch (word) {
     case "mama": return "Mama embodies an irreplaceable source of warmth and guidance, a beacon of unconditional love and strength. In her embrace, there's comfort, in her wisdom, solace, for she's the eternal nurturer, shaping hearts with tenderness and resilience."
     case "radar": return "Radar revolutionized navigation and detection, transcending mere technology to become a symbol of foresight and awareness. With its ability to pierce through darkness and distance, it stands as a testament to human ingenuity and our quest to extend the boundaries of perception."
@@ -43,69 +68,52 @@ export function GetWordAbout(word) {
   return "No data about " + word + ".";
 }
 
-export function LoadLevelsSolved(word) {
-  //console.log("SOLVED", word)
-  if (data.progress[word]) {
-    return data.progress[word];
-  }
-  if (word === "mama") return 48;
-  if (word === "radar") return 31;
-  if (word === "cocoa") return 7;
-  return 0;
+export function getLevelsSolved(word) {
+  loadAll();
+  return readFromObject(data.progress, word, 0);
 }
 
-export function SaveLevelsSolved(word, levels) {
-  //console.log("SaveLevelsSolved...", { word, levels });
-  const oldProgress = LoadLevelsSolved(word);
+export function updateLevelsSolved(word, levels) {
+  const oldProgress = getLevelsSolved(word);
   if (levels > oldProgress) {
-    console.log("NEW LEVEL SOLVED!", word, levels);
     data.progress[word] = levels;
+    saveAll();
   }
 }
 
-
-function Load(field, word, defaultValue) { if (!data[field]) data[field] = {}; return data[field].hasOwnProperty(word) ? data[field][word] : defaultValue; }
-function Save(field, word, value) { if (!data[field]) data[field] = {}; data[field][word] = value; }
-
-export function LoadLastPlayed(word) { return Load("lastPlayed", word, -1); }
-export function SaveLastPlayed(word, level) { Save("lastPlayed", word, level); }
-
-export function TotalLevelsSolved() {
-  const words = GetGameWords();
+export function getTotalLevelsSolved() {
+  const words = getWords();
   let total = 0;
   for (let w of words) {
-    total += LoadLevelsSolved(w);
+    total += getLevelsSolved(w);
   }
   return total;
 }
 
-export function LeftToUnlock(levelIndex) {
+export function getLeftToUnlock(levelIndex) {
   const needs = [0, 8, 32, 64, 128, 256];
-  const solved = TotalLevelsSolved();
+  if (levelIndex >= needs.length) return 999999;
+  const solved = getTotalLevelsSolved();
   const needed = needs[levelIndex];
   return solved >= needed ? 0 : needed - solved;
 }
 
-export function LoadLevelHistory(word, level) {
-  const levelData = createLevel(word, level);
+function getHistoryKey(word, level) { return word + " " + level; }
 
-  if (data.history[word + " " + level]) {
-    return { ...data.history[word + " " + level], solution: levelData.solution, mods: levelData.mods };
+export function getLevelHistory(word, level) {
+  const levelData = createLevel(word, level);
+  const historyKey = getHistoryKey(word, level);
+
+  if (data.history[historyKey]) {
+    return { ...data.history[historyKey], solution: levelData.solution, mods: levelData.mods };
   }
 
-  const history = [levelData.chars];
-  const slot = 0;
-  //console.log("LOADING...", levelData.mods)
-  return { history, slot, solution: levelData.solution, mods: levelData.mods };
+  return { history: [levelData.chars], slot: 0, solution: levelData.solution, mods: levelData.mods };
 }
 
-export function SaveLevelHistory(word, level, { history, slot }) {
-  //console.log("SAVING...", { word, level })
-  data.history[word + " " + level] = { history: history.slice(), slot };
-
+export function updateLevelHistory(word, level, { history, slot }) {
+  data.history[getHistoryKey(word, level)] = { history: history.slice(), slot };
   if (GamePlay.progress(history[slot]).percent === 100) {
-    //console.log("SAVING SOLVED...", { word, level })
-    SaveLevelsSolved(word, level + 1);
+    updateLevelsSolved(word, level + 1);
   }
-
 }

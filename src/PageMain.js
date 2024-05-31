@@ -1,9 +1,9 @@
 import { Block, BlockTitle, BlockBody, Button } from "./components/Ui";
 import { Window } from "./components/Window";
 import { useNavigate } from "react-router-dom";
-import { GetGameWords, GetSettings, LeftToUnlock, LoadSettings, SaveSettings, UpdateSettings } from "./utils/GameData";
+import { getWords, getSettings, getLeftToUnlock, LoadSettings, SaveSettings, updateSettings } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
-import { LoadLevelsSolved } from "./utils/GameData";
+import { getLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Item, ItemAny, ItemLocked } from "./components/Board";
 import { IconBxsLockAlt } from "./components/Icons";
@@ -26,20 +26,20 @@ function WordButton({ word, solved, total, leftToUnlock, onClick }) {
 
 export function PageMain({ }) {
   const navigate = useNavigate();
-  const [sound, setSound] = useState(GetSettings().sound);
-  const [vibro, setVibro] = useState(GetSettings().vibro);
+  const [sound, setSound] = useState(getSettings().sound);
+  const [vibro, setVibro] = useState(getSettings().vibro);
 
   function handleClick(word) {
     navigate(`/play/${word}`);
   }
 
   function handleSoundSwitch() {
-    UpdateSettings({ sound: !sound, vibro })
+    updateSettings({ sound: !sound, vibro })
     setSound(!sound);
   }
 
   function handleVibroSwitch() {
-    UpdateSettings({ sound, vibro: !vibro })
+    updateSettings({ sound, vibro: !vibro })
     setVibro(!vibro);
   }
   return (
@@ -47,11 +47,11 @@ export function PageMain({ }) {
       <Block><BlockTitle>CHOOSE A WORD</BlockTitle></Block>
 
       <Block>
-        {GetGameWords().map((word, index) => (
+        {getWords().map((word, index) => (
           <WordButton key={word}
             word={word}
-            solved={LoadLevelsSolved(word)}
-            leftToUnlock={LeftToUnlock(index)}
+            solved={getLevelsSolved(word)}
+            leftToUnlock={getLeftToUnlock(index)}
             total={LEVELS_PER_WORD} onClick={() => handleClick(word)} />
         ))}
       </Block>

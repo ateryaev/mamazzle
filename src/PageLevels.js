@@ -1,8 +1,8 @@
 import { Block, BlockTitle, BlockBody, DotPages, Button, BlockAlarm } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
-import { GetWordAbout, LoadLastPlayed } from "./utils/GameData";
+import { getWordAbout, IsGameWordValid, isPlayable, getLastPlayed } from "./utils/GameData";
 import { useEffect, useRef, useState } from "react";
-import { LoadLevelsSolved } from "./utils/GameData";
+import { getLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
@@ -51,8 +51,8 @@ export function PageLevels({ }) {
   const routerParam = useParams();
 
   const pageCount = Math.floor((LEVELS_PER_WORD + pageSize - 1) / pageSize);
-  const lastPlayed = LoadLastPlayed(routerParam.word);
-  const solvedCount = LoadLevelsSolved(routerParam.word);
+  const lastPlayed = getLastPlayed(routerParam.word);
+  const solvedCount = getLevelsSolved(routerParam.word);
   let levelToFocus = 0;
   if (lastPlayed >= 0) levelToFocus = lastPlayed;
   else if (solvedCount > 0) levelToFocus = solvedCount - 1;
@@ -74,6 +74,9 @@ export function PageLevels({ }) {
   }
 
   useEffect(() => {
+    if (!isPlayable(routerParam.word, 0)) {
+      navigate("/", { replace: true });
+    }
     scroller.current.children[currentPage].scrollIntoView({ block: 'nearest' });
   }, []);
 
@@ -107,7 +110,7 @@ export function PageLevels({ }) {
           onSelect={handlePlay}
           start={index * pageSize}
           lastPlayed={lastPlayed}
-          solved={LoadLevelsSolved(routerParam.word)}
+          solved={getLevelsSolved(routerParam.word)}
           total={LEVELS_PER_WORD} />
       ))}
     </div>
@@ -116,7 +119,7 @@ export function PageLevels({ }) {
 
     <Block>
       <BlockTitle>ABOUT</BlockTitle>
-      <BlockBody>{GetWordAbout(routerParam.word)}</BlockBody>
+      <BlockBody>{getWordAbout(routerParam.word)}</BlockBody>
     </Block>
   </Window>
   )

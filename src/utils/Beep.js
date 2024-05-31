@@ -1,9 +1,9 @@
-import { GetSettings } from "./GameData";
+import { getSettings } from "./GameData";
 
 let actx = null;
 
 export function beep(vol, freq, delay, duration) {
-  if (!GetSettings().sound) return;
+  if (!getSettings().sound) return;
   delay += 0.02;
   vol *= 0.9;
   if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
@@ -15,7 +15,7 @@ export function beep(vol, freq, delay, duration) {
   gn.connect(actx.destination);
 
   gn.gain.cancelScheduledValues(actx.currentTime);
-  gn.gain.setValueAtTime(0.0000, actx.currentTime);
+  gn.gain.setValueAtTime(0.0001, actx.currentTime);
   gn.gain.linearRampToValueAtTime(vol, actx.currentTime + delay);
   gn.gain.linearRampToValueAtTime(0.0001, actx.currentTime + delay + duration);
 
@@ -24,7 +24,7 @@ export function beep(vol, freq, delay, duration) {
 }
 
 function vibro(param) {
-  if (!GetSettings().vibro) return;
+  if (!getSettings().vibro) return;
   if (navigator.vibrate) navigator.vibrate(param);
 }
 
@@ -33,7 +33,7 @@ export function beepButton() {
 }
 
 export function preBeepButton() {
-  beep(0.5, 165, 0, 0.02);
+  //beep(0.5, 165, 0, 0.02);
   vibro(1);
 
 }

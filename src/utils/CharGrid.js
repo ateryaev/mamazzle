@@ -1,20 +1,20 @@
 import { COLS } from "./Config";
 
+function getSomeCount(chars, methodName) {
+  let count = 0;
+  chars.split("").forEach(char => {
+    if (char !== ' ' && char[methodName]() === char) count++;
+  });
+  return count;
+}
 
-// class GridItem {
-//   constructor() {
+export function getLowerCount(chars) {
+  return getSomeCount(chars, "toLowerCase");
+}
 
-//   }
-
-//   getType() {
-//     return "char";
-//   }
-// }
-// class Grid {
-//   constructor() {
-
-//   }
-// }
+export function getUpperCount(chars) {
+  return getSomeCount(chars, "toUpperCase");
+}
 
 export function isSameCharAt(pos, chars, char) {
   return getCharAt(pos, chars).toLowerCase() === char.toLowerCase();

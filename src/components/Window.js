@@ -6,7 +6,7 @@ export function Window({ children, title, onBack }) {
   const scrollDiv = useRef(null);
 
   useEffect(() => {
-    setTimeout(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, 1); console.log("WIND")
+    setTimeout(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, 1);
   }, []);
   function handleTitleClick() {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -35,6 +35,5 @@ export function Window({ children, title, onBack }) {
         </div>
       </div>
     </div>
-
   )
 }

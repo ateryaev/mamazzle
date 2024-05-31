@@ -1,7 +1,8 @@
 import { ColRow } from "./ColRow";
-import { isEmptyCharAt, isSameCharAt, setCharAt, invertCaseAt, getCharAt } from "./CharGrid";
+import { isEmptyCharAt, isSameCharAt, setCharAt, invertCaseAt, getCharAt, getLowerCount } from "./CharGrid";
 import { COLS, ROWS, NEIBS } from "./Config";
 import { splitmix32 } from "./Random";
+import { readFromObject } from "./Storage";
 
 function nextPosiblePlaces(charPlaces, nextChar, chars, mods) {
   let nextPositions = [];
@@ -56,15 +57,16 @@ function tryAddWord(word, chars, rndFunc, mods) {
 }
 
 function createMods(level, rndFunc) {
-  //48 levels
-  //0 0-7 - no mods
-  //1 8-15  -  #
-  //2 16-23 -  # *
-  //3 24-31 - ## *
+  //0 00-07 - no mods
+  //1 08-15 - no mods
+  //2 16-23 - #
+  //3 24-31 - *
   //4 32-39 - ## **
-  //5 40-47 - ### ***
-  const hashNums = [0, 1, 1, 2, 2, 3];
-  const asteNums = [0, 0, 1, 1, 2, 3];
+  //5 40-47 - ####
+  //6 48-55 - ****
+  //7 56-63 - ### ***
+  const hashNums = [0, 0, 1, 0, 2, 4, 0, 3];
+  const asteNums = [0, 0, 0, 1, 2, 0, 4, 3];
   const hashCount = hashNums[Math.floor(level / 8)];
   const asteCount = asteNums[Math.floor(level / 8)];
   let mods = " ".repeat(COLS * ROWS);
@@ -79,7 +81,6 @@ function createMods(level, rndFunc) {
     const row = rndFunc(ROWS);
     mods = setCharAt({ col, row }, mods, "*");
   }
-
   return mods;
 }
 
@@ -93,7 +94,7 @@ function finalizeChars(chars, mods, word, level, rndFunc) {
       if (mod === "#") {
         chars = setCharAt(pos, chars, char.toUpperCase());
       }
-      if (char === " " && level > 23) {
+      if (char === " " && level > 31) {
         const charIndex = rndFunc(word.length);
         const newChar = word.charAt(charIndex)
         chars = setCharAt(pos, chars, newChar.toUpperCase());
@@ -103,21 +104,62 @@ function finalizeChars(chars, mods, word, level, rndFunc) {
   return chars;
 }
 
-export function createLevel(word, level) {
-  const rndFunc = splitmix32(level + word.charCodeAt(0) + word.charCodeAt(1));
+function isSameSelection(sel1, sel2) {
+  let sameCount = 0;
+  for (let pos1 of sel1) {
+    for (let pos2 of sel2) {
+      if (ColRow.isSame(pos1, pos2)) {
+        sameCount++;
+        break;
+      }
+    }
+  }
+  return sameCount === sel1.length;
+}
+function isSelectionInSolution(selection, solution) {
 
-  //console.log("createLevel", word, level)
+  for (let sel of solution) {
+    if (isSameSelection(sel, selection)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getRndFunc(word, level) {
+  //level * (word.charCodeAt(0) + word.charCodeAt(1) + ...)
+  let wordHash = 0;
+  for (let char of word.split("")) {
+    wordHash += char.charCodeAt(0);
+  }
+  wordHash = wordHash * level;
+  return splitmix32(wordHash);
+}
+
+let levelsCache = {}
+
+export function createLevel(word, level) {
+  const levelKey = word + " " + level;
+  let levelData = readFromObject(levelsCache, levelKey, null);
+  if (levelData !== null) return levelData;
+
+  const rndFunc = getRndFunc(word, level)
+
+  console.log("GENERATING LEVEL FOR", word, level)
   let chars = " ".repeat(COLS * ROWS);
   let mods = createMods(level, rndFunc);
   let solution = [];
 
-  for (let i = 0; i < level + 1; i++) {
-    let trial = tryAddWord(word, chars, rndFunc, mods);
+  for (let i = 0; i < level + 1 || solution.length === 0 || getLowerCount(chars) < 2; i++) {
+    const trial = tryAddWord(word, chars, rndFunc, mods);
     if (trial.selection.length === 0) continue;
+    if (isSelectionInSolution(trial.selection, solution)) continue;
     chars = trial.chars;
     solution.push(trial.selection);
   }
 
   chars = finalizeChars(chars, mods, word, level, rndFunc);
-  return { chars, solution, mods };
+  levelData = { chars, solution, mods };
+  levelsCache[levelKey] = levelData;
+  return levelData;
 }

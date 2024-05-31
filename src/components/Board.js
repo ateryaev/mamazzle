@@ -196,6 +196,8 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
   const fieldRef = useRef(null);
 
   const [charClass, setCharClass] = useState({}); //e.g. {"A": 0, "M": 1}
+  const [currentPos, setCurrentPos] = useState({ col: -1, row: -1 });
+
   useEffect(() => {
     console.log("BOARD", chars, mods);
     let letters = {};
@@ -239,13 +241,14 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
   }, [])
 
   function handlePointer(e) {
-    //console.log("POINTER", e.buttons, e.touches, e.pageX)
     if (readonly) return;
     if (e.buttons === 0) return;
     let { pageX, pageY } = e.touches ? e.touches[0] : e;
     pageX += fieldRef.current.parentElement.scrollLeft;
     pageY += fieldRef.current.parentElement.scrollTop;
     const pos = ColRow.fromEvent({ pageX, pageY }, fieldRef.current);
+    if (ColRow.isSame(pos, currentPos)) return;
+    setCurrentPos(pos);
     onSelecting(pos);
   }
 
