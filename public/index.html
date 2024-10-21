@@ -12,7 +12,7 @@
 </head>
 
 <script>
-  const maxRatio = 0.52;
+  const maxRatio = 0.6;
   const defaultWidth = 360.0;
   let currentRatio = 0;
   window.onresize = () => {
@@ -27,6 +27,72 @@
     console.log("THEME", document.getElementById("themeColor").content);
   }
   window.onresize();
+
+  window.adInterface = new function () {
+
+    const STATE_INIT = 0;
+    const STATE_LOADING = 1;
+    const STATE_AD_LOADED = 2;
+    const STATE_AD_LOADING_ERROR = 3;
+    const STATE_AD_SHOWING = 4;
+    const STATE_REWARD_AVAILABLE = 5;
+
+    let state = STATE_INIT;
+
+    function loadAd() {
+      if (state !== STATE_INIT) return;
+      state = STATE_LOADING;
+      console.log("Asking NativeWrapper to load ad...");
+      if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.loadAd();
+    }
+
+    loadAd();
+
+    //To use from Web side:
+    this.isAdLoaded = () => {
+      return state === STATE_AD_LOADED;
+    }
+    this.isRewardAvailable = () => {
+      return state === STATE_REWARD_AVAILABLE;
+    }
+
+    this.showAd = () => {
+      if (state !== STATE_AD_LOADED) return;
+      state = STATE_AD_SHOWING;
+      console.log("Showing ad...");
+      if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.showAd();
+    }
+
+    this.collectReward = () => {
+      if (state !== STATE_REWARD_AVAILABLE) return;
+      state = STATE_INIT;
+      console.log("Reward is consumed");
+      loadAd();
+    }
+
+    //to call from NativeWrapper side:
+    this.setAdIsReady = () => {
+      if (state !== STATE_LOADING) return;
+      state = STATE_AD_LOADED;
+      console.log("Ad is loaded and ready to be shown");
+    }
+
+    this.setAdLoadingError = () => {
+      if (state !== STATE_LOADING) return;
+      state = STATE_AD_LOADING_ERROR;
+      console.log("Error happened while loading ad");
+      setTimeout(() => {
+        loadAd();
+      }, 30000);
+    }
+
+    this.setRewardIsAvailable = () => {
+      if (state !== STATE_AD_SHOWING) return;
+      state = STATE_REWARD_AVAILABLE;
+      console.log("Reward is available");
+    }
+  }
+
 </script>
 
 <body class="flex justify-center" style="background: #000;" oncontextmenu="event.preventDefault()">

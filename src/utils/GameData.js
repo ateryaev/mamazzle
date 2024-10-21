@@ -2,7 +2,7 @@ import { createLevel } from "./LevelCreator";
 import { GamePlay } from "./GamePlay"
 import { loadFromLocalStorage, readFromObject, saveToLocalStorage } from "./Storage";
 
-let data = { history: {}, progress: {}, page: {}, settings: {}, lastPlayed: {} };
+let data = { history: {}, progress: {}, skipped: [], page: {}, settings: {}, lastPlayed: {} };
 
 export function getLastPlayed(word) { return readFromObject(data.lastPlayed, word, -1); }
 export function updateLastPlayed(word, level) { data.lastPlayed[word] = level; }
@@ -11,7 +11,8 @@ function loadAll() {
   if (data.loaded) return;
   data.settings = loadFromLocalStorage('mamazzle_settings', { sound: true, vibro: true });
   data.progress = loadFromLocalStorage('mamazzle_progress', {});
-  console.log("LOAD", data.settings, data.progress);
+  data.skipped = loadFromLocalStorage('mamazzle_skipped', []);
+  console.log("LOAD", data.settings, data.progress, data.skipped);
   data.loaded = true;
 }
 
@@ -19,6 +20,7 @@ function saveAll() {
   console.log("SAVE", data.settings, data.progress);
   saveToLocalStorage('mamazzle_settings', data.settings);
   saveToLocalStorage('mamazzle_progress', data.progress);
+  saveToLocalStorage('mamazzle_skipped', data.skipped);
 }
 
 export function getSettings() {
@@ -81,6 +83,31 @@ export function updateLevelsSolved(word, levels) {
   }
 }
 
+export function setSkipped(word, level) {
+  //only last level can be skipped
+  if (level !== getLevelsSolved(word)) return;
+  //check if already skipped
+  for (let level of data.skipped) {
+    if (level.word === word && level.level === level) return;
+  }
+  data.skipped.push({ word, level });
+  updateLevelsSolved(word, level + 1);
+  saveAll();
+}
+
+export function isLevelSkipped(word, level) {
+  loadAll();
+  for (let skipped of data.skipped) {
+    if (skipped.word === word && skipped.level === level) return true;
+  }
+  return false;
+}
+
+export function getSkippedLevels(word) {
+  loadAll();
+  return data.skipped.filter((level) => level.word === word).map((level) => level.level);
+}
+
 export function getTotalLevelsSolved() {
   const words = getWords();
   let total = 0;
@@ -114,6 +141,9 @@ export function getLevelHistory(word, level) {
 export function updateLevelHistory(word, level, { history, slot }) {
   data.history[getHistoryKey(word, level)] = { history: history.slice(), slot };
   if (GamePlay.progress(history[slot]).percent === 100) {
+    data.skipped = data.skipped.filter((wordlevel) => wordlevel.word !== word || wordlevel.level !== level);
+    console.log(data.skipped);
     updateLevelsSolved(word, level + 1);
+    saveAll();
   }
 }

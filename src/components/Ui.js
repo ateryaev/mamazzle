@@ -19,7 +19,7 @@ export function Title({ children, onBack }) {
   )
 }
 
-export function Button({ children, disabled, onClick }) {
+export function Button({ children, disabled, onClick, special }) {
   return (
     <button onClick={() => { beepButton(); onClick() }}
       onPointerDown={() => !disabled && preBeepButton()}
@@ -27,9 +27,11 @@ export function Button({ children, disabled, onClick }) {
       min-h-[59px] justify-center w-full
       text-white
       bg-button
-      ro rounded-sm
+      data-[special=true]:bg-gray-400
+      rounded-sm
       enabled:active:brightness-125
-      disabled:bg-gray-100 disabled:text-gray-400 "
+      disabled:bg-gray-100 disabled:text-gray-400"
+      data-special={special}
       disabled={disabled}>
       {children}
     </button>)

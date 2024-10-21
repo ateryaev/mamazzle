@@ -1,6 +1,6 @@
 import { Block, BlockTitle, BlockBody, DotPages, Button, BlockAlarm } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
-import { getWordAbout, IsGameWordValid, isPlayable, getLastPlayed } from "./utils/GameData";
+import { getWordAbout, IsGameWordValid, isPlayable, getLastPlayed, getSkippedLevels } from "./utils/GameData";
 import { useEffect, useRef, useState } from "react";
 import { getLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
@@ -9,11 +9,13 @@ import { Window } from "./components/Window";
 
 const pageSize = 16;
 
-function LevelButton({ num, active, unsolved, isLast, onSelect }) {
+function LevelButton({ num, active, unsolved, isLast, onSelect, skipped }) {
   const lvl = num.toString().padStart(2, '0');
   return (
-    <Button onClick={() => active && onSelect(num)} disabled={!active}>
-      <div className="aspect-square flex-1 flex items-center justify-center">
+    <Button onClick={() => active && onSelect(num)} disabled={!active} special={skipped}>
+      <div className="aspect-square flex-1 flex items-center justify-center
+      d data-[skipped=true]:"
+        data-skipped={skipped}>
         <div className="flex-1">
           {lvl}
           {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-90" >new</Blinker>}
@@ -27,7 +29,7 @@ function LevelButton({ num, active, unsolved, isLast, onSelect }) {
   )
 }
 
-function LevelsPage({ start, solved, total, onSelect, lastPlayed }) {
+function LevelsPage({ start, solved, total, onSelect, lastPlayed, skipped }) {
   const size = total - start < pageSize ? total - start : pageSize;
 
   return (
@@ -39,6 +41,7 @@ function LevelsPage({ start, solved, total, onSelect, lastPlayed }) {
             num={start + index}
             isLast={lastPlayed === start + index}
             active={start + index <= solved}
+            skipped={skipped.includes(start + index)}
             unsolved={start + index == solved} />
         ))}
       </div>
@@ -111,6 +114,7 @@ export function PageLevels({ }) {
           start={index * pageSize}
           lastPlayed={lastPlayed}
           solved={getLevelsSolved(routerParam.word)}
+          skipped={getSkippedLevels(routerParam.word)}
           total={LEVELS_PER_WORD} />
       ))}
     </div>
