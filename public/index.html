@@ -94,6 +94,11 @@
     }
   }
 
+  window.getNativeWrapper = () => {
+    if (typeof (NativeWrapper) !== 'undefined') return NativeWrapper;
+    return null;
+  }
+
 </script>
 
 <body class="flex justify-center" style="background: #000;" oncontextmenu="event.preventDefault()">

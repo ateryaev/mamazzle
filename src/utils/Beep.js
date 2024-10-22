@@ -25,7 +25,8 @@ export function beep(vol, freq, delay, duration) {
 
 function vibro(param) {
   if (!getSettings().vibro) return;
-  if (navigator.vibrate) navigator.vibrate(param);
+  if (window.getNativeWrapper()) window.getNativeWrapper().vibrate();
+  else if (navigator.vibrate) navigator.vibrate(param);
 }
 
 export function beepButton() {
@@ -33,9 +34,7 @@ export function beepButton() {
 }
 
 export function preBeepButton() {
-  //beep(0.5, 165, 0, 0.02);
   vibro(1);
-
 }
 
 export function beepSwipe(index) {
