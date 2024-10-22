@@ -82,6 +82,7 @@
       state = STATE_AD_LOADING_ERROR;
       console.log("Error happened while loading ad");
       setTimeout(() => {
+        state = STATE_INIT;
         loadAd();
       }, 30000);
     }
