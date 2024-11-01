@@ -58,7 +58,7 @@ export function PageLevels({ }) {
   const solvedCount = getLevelsSolved(routerParam.word);
   let levelToFocus = 0;
   if (lastPlayed >= 0) levelToFocus = lastPlayed;
-  else if (solvedCount > 0) levelToFocus = solvedCount - 1;
+  else if (solvedCount > 0) levelToFocus = solvedCount;
   let currentPage = Math.floor(levelToFocus / pageSize);
   if (currentPage >= pageCount) currentPage = pageCount - 1;
 
@@ -83,9 +83,9 @@ export function PageLevels({ }) {
     scroller.current.children[currentPage].scrollIntoView({ block: 'nearest' });
   }, []);
 
-  useEffect(() => {
-    changePage(pageIndex);
-  }, [pageIndex]);
+  // useEffect(() => {
+  //   changePage(pageIndex);
+  // }, [pageIndex]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
