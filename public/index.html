@@ -23,8 +23,11 @@
     newWidth = Math.round(newWidth);
     const newContent = `width=${newWidth}, user-scalable=0`;
     document.getElementById("viewportMeta").content = newContent;
-    document.getElementById("themeColor").content = ratio > maxRatio ? "#000" : "#296";
+    const newTopColor = ratio > maxRatio ? "#000000" : "#229966";
+    document.getElementById("themeColor").content = newTopColor;
     console.log("THEME", document.getElementById("themeColor").content);
+
+    if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.recolor(newTopColor, "#D1D5DB");
   }
   window.onresize();
 
@@ -46,7 +49,7 @@
       if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.loadAd();
     }
 
-    loadAd();
+    loadAd();// - uncomment to load ad on start, TBD after releasing
 
     //To use from Web side:
     this.isAdLoaded = () => {
@@ -101,7 +104,7 @@
 
 </script>
 
-<body class="flex justify-center" style="background: #000;" oncontextmenu="event.preventDefault()">
+<body class="flex justify-center" style="background: #000;">
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 </body>

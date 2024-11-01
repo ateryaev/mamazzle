@@ -40,7 +40,7 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
   }, [readonly, counter]);
 
   return (<div {...props} style={style} className="text-[24px] aspect-square uppercase flex 
-    justify-center items-center border-8 border-gray-100 bg-gray-100
+    justify-center items-center border-8 border-gray-100 bg-gray-100 touch-none select-none
   data-[state=on]:border-gray-600 data-[state=on]:text-gray-600
   data-[char=c3]:bg-pink-200
   data-[char=c4]:bg-violet-200
@@ -197,6 +197,7 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
 
   const [charClass, setCharClass] = useState({}); //e.g. {"A": 0, "M": 1}
   const [currentPos, setCurrentPos] = useState({ col: -1, row: -1 });
+  const [currentTouchId, setCurrentTouchId] = useState(-1);
 
   useEffect(() => {
     console.log("BOARD", chars, mods);
@@ -240,10 +241,29 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
     fieldRef.current.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
   }, [])
 
+  function getFirstTouchId(e) {
+    return e.pointerId;
+  }
+
+  function getTouch(e, touchId) {
+    if (e.pointerId === touchId) return e;
+    return null;
+  }
+
   function handlePointer(e) {
     if (readonly) return;
+    e.preventDefault();
+    e.stopPropagation();
     if (e.buttons === 0) return;
-    let { pageX, pageY } = e.touches ? e.touches[0] : e;
+
+    let touchId = currentTouchId;
+    if (selection.length === 0) {
+      touchId = getFirstTouchId(e);
+      setCurrentTouchId(touchId);
+    }
+    if (!getTouch(e, touchId)) return;
+
+    let { pageX, pageY } = getTouch(e, touchId);//e.touches ? e.touches[0] : e;
     pageX += fieldRef.current.parentElement.scrollLeft;
     pageY += fieldRef.current.parentElement.scrollTop;
     const pos = ColRow.fromEvent({ pageX, pageY }, fieldRef.current);
@@ -252,20 +272,26 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
     onSelecting(pos);
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(e) {
     if (readonly) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (!getTouch(e, currentTouchId)) return;
+    setCurrentPos({ col: -1, row: -1 });
     onSelectEnd();
   }
 
   return (
     <div
       ref={fieldRef}
-      className="aspect-square select-none bg-white grid grid-cols-5 gap-2 p-2  rounded-md"
+      className="aspect-square select-none bg-white grid grid-cols-5 gap-2 p-2 rounded-md touch-none"
+
       onPointerDown={handlePointer}
       onPointerMove={handlePointer}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
     >
+
       {chars.split("").map((char, index) =>
         <Fragment key={index}>
           {((mods.charAt(index) !== "*" && mods.charAt(index) !== "#") || char === " ") && <Item char={char} readonly={solved} index={charClass[char.toUpperCase()]}

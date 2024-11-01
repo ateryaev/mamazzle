@@ -36,9 +36,10 @@ function SkipLevelButton({ onSkip }) {
   if (rewardIsAvailable) {
     return (
       <div className="-m-1 z-10 h-0 flex items-end justify-end">
-        <button className="px-2 py-1 shadow-md
-        border-button border-2 text-button text-xs 
-        rounded-lg bg-white mx-2 -my-9 flex gap-1 justify-center items-center
+        <button className="px-2 py-[2px] shadow-md 
+      border-button border-2 text-button text-xs  mx-0 -my-6
+      rounded-full bg-white flex justify-center items-center gap-1
+      active:bg-button active:text-white 
         " onClick={onSkipClick}>
           skip level <Blinker times={6}><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-circle-arrow-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0 -18" /><path d="M16 12l-4 -4" /><path d="M16 12h-8" /><path d="M12 16l4 -4" /></svg></Blinker>
         </button>
@@ -48,9 +49,10 @@ function SkipLevelButton({ onSkip }) {
   if (adIsReady) {
     return (
       <div className="-m-1 z-10 h-0 flex items-end justify-end">
-        <button className="p-2 py-1 shadow-md 
-      border-button border-2 text-button text-xs 
-      rounded-lg bg-white mx-2 -my-9 flex justify-center items-center gap-1
+        <button className="px-2 py-[2px] shadow-md 
+      border-button border-2 text-button text-xs  mx-0 -my-6
+      rounded-full bg-white flex justify-center items-center gap-1
+      active:bg-button active:text-white 
       " onClick={onShowClick}>watch
           ad
           to skip level
@@ -229,7 +231,6 @@ export function PagePlay({ }) {
 
       {!isEasyLevel && isNew &&
         <SkipLevelButton onSkip={skipLevel} />}
-
 
       {!demoMode && !canDemo && !solved && <ProgressBar percent={progress} />}
 
