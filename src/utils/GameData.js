@@ -103,6 +103,21 @@ export function isLevelSkipped(word, level) {
   return false;
 }
 
+export function getSkippedCount(word) {
+  loadAll();
+  let count = 0;
+  for (let skipped of data.skipped) {
+    if (skipped.word === word) count++;
+  }
+  return count;
+}
+
+export function getTotalSkippedCount() {
+  loadAll();
+  return data.skipped.length;
+}
+
+
 export function getSkippedLevels(word) {
   loadAll();
   return data.skipped.filter((level) => level.word === word).map((level) => level.level);

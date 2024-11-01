@@ -1,6 +1,6 @@
 import { Block, BlockTitle, BlockBody, DotPages, Button, BlockAlarm } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
-import { getWordAbout, IsGameWordValid, isPlayable, getLastPlayed, getSkippedLevels } from "./utils/GameData";
+import { getWordAbout, IsGameWordValid, isPlayable, getLastPlayed, getSkippedLevels, getSkippedCount } from "./utils/GameData";
 import { useEffect, useRef, useState } from "react";
 import { getLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
@@ -56,6 +56,7 @@ export function PageLevels({ }) {
   const pageCount = Math.floor((LEVELS_PER_WORD + pageSize - 1) / pageSize);
   const lastPlayed = getLastPlayed(routerParam.word);
   const solvedCount = getLevelsSolved(routerParam.word);
+  const skippedCount = getSkippedCount(routerParam.word);
   let levelToFocus = 0;
   if (lastPlayed >= 0) levelToFocus = lastPlayed;
   else if (solvedCount > 0) levelToFocus = solvedCount;
@@ -101,8 +102,8 @@ export function PageLevels({ }) {
 
   return (<Window onBack={handleBack} title={<>{routerParam.word}</>}>
     <Block>
-      {solvedCount < LEVELS_PER_WORD && <BlockTitle>CHOOSE A LEVEL</BlockTitle>}
-      {solvedCount >= LEVELS_PER_WORD && <BlockAlarm>ALL LEVELS SOLVED</BlockAlarm>}
+      {solvedCount - skippedCount < LEVELS_PER_WORD && <BlockTitle>CHOOSE A LEVEL</BlockTitle>}
+      {solvedCount >= LEVELS_PER_WORD && skippedCount === 0 && <BlockAlarm>ALL LEVELS SOLVED</BlockAlarm>}
     </Block>
 
     <div className="overflow-x-scroll h-fit text-nowrap snap-x snap-mandatory bg-white rounded-md"
@@ -113,7 +114,7 @@ export function PageLevels({ }) {
           onSelect={handlePlay}
           start={index * pageSize}
           lastPlayed={lastPlayed}
-          solved={getLevelsSolved(routerParam.word)}
+          solved={solvedCount}
           skipped={getSkippedLevels(routerParam.word)}
           total={LEVELS_PER_WORD} />
       ))}

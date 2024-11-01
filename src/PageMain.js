@@ -1,7 +1,7 @@
 import { Block, BlockTitle, BlockBody, Button } from "./components/Ui";
 import { Window } from "./components/Window";
 import { useNavigate } from "react-router-dom";
-import { getWords, getSettings, getLeftToUnlock, LoadSettings, SaveSettings, updateSettings } from "./utils/GameData";
+import { getWords, getSettings, getLeftToUnlock, LoadSettings, SaveSettings, updateSettings, getSkippedCount } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { getLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
@@ -9,7 +9,7 @@ import { Item, ItemAny, ItemLocked } from "./components/Board";
 import { IconBxsLockAlt } from "./components/Icons";
 import { useState } from "react";
 
-function WordButton({ word, solved, total, leftToUnlock, onClick }) {
+function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
   return (
     <Button onClick={onClick} disabled={disabled}>
@@ -18,7 +18,9 @@ function WordButton({ word, solved, total, leftToUnlock, onClick }) {
         {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 opacity-90 lowercase -translate-y-1">new</Blinker>}
         {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px]">solve {leftToUnlock} to unlock</div>}
       </div>
-      {!disabled && <div className="">{solved}/{total}</div>}
+      {!disabled && <div className="text-right">{solved}/{total}
+        {skipped > 0 && <div className="text-xs h-0 lowercase translate-y-[-4px]">{skipped} skipped</div>}
+      </div>}
       {disabled && <div className=""><IconBxsLockAlt /> </div>}
     </Button>
   )
@@ -51,6 +53,7 @@ export function PageMain({ }) {
           <WordButton key={word}
             word={word}
             solved={getLevelsSolved(word)}
+            skipped={getSkippedCount(word)}
             leftToUnlock={getLeftToUnlock(index)}
             total={LEVELS_PER_WORD} onClick={() => handleClick(word)} />
         ))}
