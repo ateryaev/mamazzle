@@ -4,29 +4,37 @@ let actx = null;
 
 export function beep(vol, freq, delay, duration) {
   if (!getSettings().sound) return;
-  delay += 0.02;
-  vol *= 0.9;
-  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
-  let osc = actx.createOscillator();
-  let gn = actx.createGain();
-  osc.connect(gn)
-  osc.frequency.value = freq;
-  osc.type = "triangle";
-  gn.connect(actx.destination);
+  try {
+    delay += 0.02;
+    vol *= 0.9;
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    let osc = actx.createOscillator();
+    let gn = actx.createGain();
+    osc.connect(gn)
+    osc.frequency.value = freq;
+    osc.type = "triangle";
+    gn.connect(actx.destination);
 
-  gn.gain.cancelScheduledValues(actx.currentTime);
-  gn.gain.setValueAtTime(0.0001, actx.currentTime);
-  gn.gain.linearRampToValueAtTime(vol, actx.currentTime + delay);
-  gn.gain.linearRampToValueAtTime(0.0001, actx.currentTime + delay + duration);
+    gn.gain.cancelScheduledValues(actx.currentTime);
+    gn.gain.setValueAtTime(0.0001, actx.currentTime);
+    gn.gain.linearRampToValueAtTime(vol, actx.currentTime + delay);
+    gn.gain.linearRampToValueAtTime(0.0001, actx.currentTime + delay + duration);
 
-  osc.start(actx.currentTime);
-  osc.stop(actx.currentTime + delay + 0.02 + duration)
+    osc.start(actx.currentTime);
+    osc.stop(actx.currentTime + delay + 0.02 + duration)
+  } catch (e) {
+    //ignore
+  }
 }
 
 function vibro(param) {
   if (!getSettings().vibro) return;
-  if (window.getNativeWrapper()) window.getNativeWrapper().vibrate();
-  else if (navigator.vibrate) navigator.vibrate(param);
+  try {
+    if (window.getNativeWrapper()) window.getNativeWrapper().vibrate();
+    else if (navigator.vibrate) navigator.vibrate(param);
+  } catch (e) {
+    //ignore
+  }
 }
 
 export function beepButton() {
