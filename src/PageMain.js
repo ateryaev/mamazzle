@@ -1,7 +1,7 @@
-import { Block, BlockTitle, BlockBody, Button } from "./components/Ui";
+import { Block, BlockTitle, BlockBody, Button, BlockAlarm } from "./components/Ui";
 import { Window } from "./components/Window";
 import { useNavigate } from "react-router-dom";
-import { getWords, getSettings, getLeftToUnlock, LoadSettings, SaveSettings, updateSettings, getSkippedCount } from "./utils/GameData";
+import { getWords, getSettings, getLeftToUnlock, LoadSettings, SaveSettings, updateSettings, getSkippedCount, getTotalLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { getLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
@@ -46,8 +46,10 @@ export function PageMain({ }) {
   }
   return (
     <Window title={<>mamazzle<br />puzzle</>}>
-      <Block><BlockTitle>CHOOSE A WORD</BlockTitle></Block>
+      {getTotalLevelsSolved() < 64 * 5 && <Block><BlockTitle>CHOOSE A WORD</BlockTitle></Block>}
 
+      {getTotalLevelsSolved() == 64 * 5 &&
+        <Block><BlockAlarm>YOU ARE MAMASTER</BlockAlarm></Block>}
       <Block>
         {getWords().map((word, index) => (
           <WordButton key={word}
@@ -115,7 +117,7 @@ export function PageMain({ }) {
 
           <h2 className="text-center block font-semibold py-2">Goal</h2>
           Your objective is to colorize all the letters on the game field.
-          Solve all levels and words to become mamaster.
+          Solve all levels and words to become Mamaster.
         </BlockBody>
       </Block>
 

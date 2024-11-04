@@ -4,12 +4,18 @@ import { Board } from "./components/Board";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import { GamePlay } from "./utils/GamePlay";
-import { isPlayable, getLevelHistory, getLevelsSolved, updateLastPlayed, updateLevelHistory, setSkipped, isLevelSkipped } from "./utils/GameData";
+import { isPlayable, getLevelHistory, getLevelsSolved, updateLastPlayed, updateLevelHistory, setSkipped, isLevelSkipped, getSkippedCount } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
-import { LEVELS_PER_WORD } from "./utils/Config";
+import { LEVELS_PER_WORD, MAX_WORD_LEVELS_CAN_SKIP } from "./utils/Config";
 import { beepSolve, beepSwipe, beepSwipeCancel, beepSwipeComplete } from "./utils/Beep";
 import { Selection } from "./components/Selection";
+
+function CannotSkipLabel({ children }) {
+  return (
+    <div className="p-[3px] text-gray-600 opacity-20 text-sm text-center">{children}</div>
+  )
+}
 
 function SkipLevelButton({ onSkip }) {
 
@@ -33,31 +39,35 @@ function SkipLevelButton({ onSkip }) {
     return () => clearInterval(tmo);
   }, []);
 
+  if (!rewardIsAvailable && !adIsReady) {
+    return <CannotSkipLabel>cannot skip - no ads available</CannotSkipLabel>
+  }
+
   if (rewardIsAvailable) {
     return (
-      <div className="-m-1 z-10 h-0 flex items-end justify-end">
-        <button className="px-2 py-[2px] shadow-md 
-      border-button border-2 text-button text-xs  mx-0 -my-6
-      rounded-full bg-white flex justify-center items-center gap-1
-      active:bg-button active:text-white 
-        " onClick={onSkipClick}>
-          skip level <Blinker times={6}><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-circle-arrow-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0 -18" /><path d="M16 12l-4 -4" /><path d="M16 12h-8" /><path d="M12 16l4 -4" /></svg></Blinker>
+      <div className="flex items-center justify-stretch">
+        <button className="p-1 py-0 shadow-md flex-1 
+  border-button border-[3px] text-button text-sm
+  rounded-md bg-white flex justify-center items-center gap-1
+  active:bg-button active:text-white 
+    " onClick={onSkipClick}>
+          skip level <Blinker times={6}><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-circle-arrow-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0 -18" /><path d="M16 12l-4 -4" /><path d="M16 12h-8" /><path d="M12 16l4 -4" /></svg></Blinker>
         </button>
       </div >
     )
   }
   if (adIsReady) {
     return (
-      <div className="-m-1 z-10 h-0 flex items-end justify-end">
-        <button className="px-2 py-[2px] shadow-md 
-      border-button border-2 text-button text-xs  mx-0 -my-6
-      rounded-full bg-white flex justify-center items-center gap-1
-      active:bg-button active:text-white 
-      " onClick={onShowClick}>watch
+      <div className="flex items-center justify-stretch">
+        <button className="p-1 py-0 shadow-md flex-1 
+  border-button border-[3px] text-button text-sm
+  rounded-md bg-white flex justify-center items-center gap-1
+  active:bg-button active:text-white 
+    " onClick={onShowClick}>watch
           ad
           to skip level
           <Blinker times={6}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-external-link"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" /><path d="M11 13l9 -9" /><path d="M15 4h5v5" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-external-link"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" /><path d="M11 13l9 -9" /><path d="M15 4h5v5" /></svg>
           </Blinker>
         </button>
       </div>
@@ -96,6 +106,7 @@ export function PagePlay({ }) {
   const wasSkipped = useMemo(() => { return isLevelSkipped(word, level) }, [level, word, solved]);
   const wasSolved = useMemo(() => { return !isLevelSkipped(word, level) && level < getLevelsSolved(word) }, [level, word, solved]);
   const isNew = useMemo(() => { return level === getLevelsSolved(word) }, [level, word, solved]);
+  const skippedCount = useMemo(() => getSkippedCount(word), [word, level, solved])
 
   function addSlot(newChars) {
     let newHistory = history.slice(0, historySlot + 1);
@@ -229,8 +240,8 @@ export function PagePlay({ }) {
 
       {demoMode && !canDemo && <Block><BlockTitle>DEMO MODE</BlockTitle></Block>}
 
-      {!isEasyLevel && isNew &&
-        <SkipLevelButton onSkip={skipLevel} />}
+      {!isEasyLevel && isNew && skippedCount < MAX_WORD_LEVELS_CAN_SKIP && <SkipLevelButton onSkip={skipLevel} />}
+      {!isEasyLevel && isNew && skippedCount >= MAX_WORD_LEVELS_CAN_SKIP && <CannotSkipLabel>too many skipped already</CannotSkipLabel>}
 
       {!demoMode && !canDemo && !solved && <ProgressBar percent={progress} />}
 
