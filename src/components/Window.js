@@ -28,10 +28,6 @@ export function Window({ children, title, onBack }) {
         <div className="text-xs py-2 text-gray-500 text-center">
           Mamazzle v1.0<br />
           Anton Teryaev, 2024<br />
-          <a href="https://github.com/ateryaev/mamazzle"
-            className="text-2xl text-center mt-2 inline-block hover:text-gray-700" target="_blank">
-            <IconGithub />
-          </a>
         </div>
       </div>
     </div>
