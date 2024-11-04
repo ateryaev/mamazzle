@@ -15,11 +15,11 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
     <Button onClick={onClick} disabled={disabled}>
       <div className="uppercase flex-1 text-left">
         {word}
-        {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 opacity-90 lowercase -translate-y-1">new</Blinker>}
-        {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px]">solve {leftToUnlock} to unlock</div>}
+        {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 lowercase -translate-y-1 opacity-50">new</Blinker>}
+        {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">solve {leftToUnlock} to unlock</div>}
       </div>
       {!disabled && <div className="text-right">{solved}/{total}
-        {skipped > 0 && <div className="text-xs h-0 lowercase translate-y-[-4px]">{skipped} skipped</div>}
+        {skipped > 0 && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">{skipped} skipped</div>}
       </div>}
       {disabled && <div className=""><IconBxsLockAlt /> </div>}
     </Button>
@@ -51,13 +51,27 @@ export function PageMain({ }) {
       {getTotalLevelsSolved() == 64 * 5 &&
         <Block><BlockAlarm>YOU ARE MAMASTER</BlockAlarm></Block>}
       <Block>
-        {getWords().map((word, index) => (
+        {getWords().slice(0, 5).map((word, index) => (
           <WordButton key={word}
             word={word}
             solved={getLevelsSolved(word)}
             skipped={getSkippedCount(word)}
             leftToUnlock={getLeftToUnlock(index)}
             total={LEVELS_PER_WORD} onClick={() => handleClick(word)} />
+        ))}
+      </Block>
+
+      <Block>
+        {getWords().slice(5).map((word) => (
+          <Button onClick={() => handleClick(word)} special={true}>
+            <div className="uppercase flex-1 text-left">
+              {word}
+              <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">season word</div>
+            </div>
+            <div className="text-right">{getLevelsSolved(word)}/{LEVELS_PER_WORD}
+              {getSkippedCount(word) > 0 && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">{getSkippedCount(word)} skipped</div>}
+            </div>
+          </Button>
         ))}
       </Block>
 

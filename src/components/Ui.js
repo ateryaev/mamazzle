@@ -27,7 +27,9 @@ export function Button({ children, disabled, onClick, special }) {
       min-h-[59px] justify-center w-full
       text-white
       bg-button
-      data-[special=true]:bg-gray-400
+      data-[special=true]:bg-opacity-20 
+      data-[special=true]:border-0
+      data-[special=true]:text-button
       rounded-sm
       enabled:active:brightness-125
       disabled:bg-gray-100 disabled:text-gray-400"

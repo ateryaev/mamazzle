@@ -18,7 +18,7 @@ function LevelButton({ num, active, unsolved, isLast, onSelect, skipped }) {
         data-skipped={skipped}>
         <div className="flex-1">
           {lvl}
-          {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-90" >new</Blinker>}
+          {active && unsolved && <Blinker className="block text-xs h-0 -translate-y-1 opacity-50" >new</Blinker>}
         </div>
       </div>
       {isLast &&
