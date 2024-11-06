@@ -89,16 +89,14 @@ export function ProgressBar({ percent }) {
   }, [render, percent]);
 
   return (
-    <Block>
-      <BlockTitle>
-        <div className="flex-1 pb-1">
-          <div className="text-gray-600 text-center">&nbsp;{Math.round(render)}%</div>
-          <div className="h-2 w-[100%] bg-gray-300 rounded-md overflow-hidden">
-            <div className="h-2 bg-gray-600 w-1 rounded-md" style={{ width: render + "%" }}></div>
-          </div>
+    <BlockTitle>
+      <div className="flex-1 pb-1">
+        <div className="text-gray-600 text-center">&nbsp;{Math.round(render)}%</div>
+        <div className="h-2 w-[100%] bg-gray-300 rounded-md overflow-hidden">
+          <div className="h-2 bg-gray-600 w-1 rounded-md" style={{ width: render + "%" }}></div>
         </div>
-      </BlockTitle>
-    </Block>
+      </div>
+    </BlockTitle>
   )
 }
 

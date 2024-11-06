@@ -63,7 +63,7 @@ export function PageMain({ }) {
 
       <Block>
         {getWords().slice(5).map((word) => (
-          <Button onClick={() => handleClick(word)} special={true}>
+          <Button onClick={() => handleClick(word)} special={true} key={word}>
             <div className="uppercase flex-1 text-left">
               {word}
               <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">season word</div>

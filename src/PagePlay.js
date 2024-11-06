@@ -1,5 +1,5 @@
 import { Block, BlockTitle, RoundButton, ProgressBar, Button, BlockAlarm } from "./components/Ui";
-import { IconRedo, IconUndo, IconBxsHandUp } from "./components/Icons"
+import { IconRedo, IconUndo, IconBxsHandUp, IconSkip, IconShowAd } from "./components/Icons"
 import { Board } from "./components/Board";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
@@ -39,41 +39,22 @@ function SkipLevelButton({ onSkip }) {
     return () => clearInterval(tmo);
   }, []);
 
-  if (!rewardIsAvailable && !adIsReady) {
-    return <CannotSkipLabel>cannot skip - no ads available</CannotSkipLabel>
-  }
-
   if (rewardIsAvailable) {
     return (
-      <div className="flex items-center justify-stretch">
-        <button className="p-1 py-0 shadow-md flex-1 
-  border-button border-[3px] text-button text-sm
-  rounded-md bg-white flex justify-center items-center gap-1
-  active:bg-button active:text-white 
-    " onClick={onSkipClick}>
-          skip level <Blinker times={6}><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-circle-arrow-right"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0 -18" /><path d="M16 12l-4 -4" /><path d="M16 12h-8" /><path d="M12 16l4 -4" /></svg></Blinker>
-        </button>
-      </div >
+      <Block><Button special={true} onClick={onSkipClick}>
+        skip level&nbsp;<Blinker times={6}><IconSkip /></Blinker>
+      </Button></Block>
     )
   }
+
   if (adIsReady) {
     return (
-      <div className="flex items-center justify-stretch">
-        <button className="p-1 py-0 shadow-md flex-1 
-  border-button border-[3px] text-button text-sm
-  rounded-md bg-white flex justify-center items-center gap-1
-  active:bg-button active:text-white 
-    " onClick={onShowClick}>watch
-          ad
-          to skip level
-          <Blinker times={6}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-external-link"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" /><path d="M11 13l9 -9" /><path d="M15 4h5v5" /></svg>
-          </Blinker>
-        </button>
-      </div>
+      <Block><Button special={true} onClick={onShowClick}>
+        watch ad to skip level&nbsp;<Blinker times={6}><IconShowAd /></Blinker>
+      </Button></Block>
     )
   }
-  return (<></>);
+  return <CannotSkipLabel>cannot skip - no ads available</CannotSkipLabel>
 }
 
 export function PagePlay({ }) {
@@ -124,7 +105,6 @@ export function PagePlay({ }) {
 
   function handleSelectEnd() {
     const newChars = GamePlay.untouch(chars, word, selection, mods);
-
     if (newChars !== chars) {
       addSlot(newChars);
       beepSwipeComplete();
@@ -242,20 +222,7 @@ export function PagePlay({ }) {
 
       {!isEasyLevel && isNew && skippedCount < MAX_WORD_LEVELS_CAN_SKIP && <SkipLevelButton onSkip={skipLevel} />}
       {!isEasyLevel && isNew && skippedCount >= MAX_WORD_LEVELS_CAN_SKIP && <CannotSkipLabel>too many skipped already</CannotSkipLabel>}
-
-      {!demoMode && !canDemo && !solved && <ProgressBar percent={progress} />}
-
-
-      {!isEasyLevel && false && isNew &&
-        <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2 rounded-md">
-          <Button onClick={skipLevel}>
-            <div className="uppercase mt-[-8px]">
-              SKIP level
-              <Blinker className="text-sm opacity-90 h-0 mt-[-8px] block lowercase">watch ad</Blinker>
-            </div>
-          </Button>
-        </div>}
-
+      {!demoMode && !canDemo && !solved && <Block><ProgressBar percent={progress} /></Block>}
 
       <div className="flex justify-center gap-2 p-2 xbg-white">
         <RoundButton disabled={historySlot === 0 || demoMode} onClick={handleUndo}>

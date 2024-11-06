@@ -87,3 +87,26 @@ export function IconRedo(props) {
     </svg>
   );
 }
+
+export function IconSkip(props) {
+  return (
+    <svg height="1em" width="1em" viewBox="0 0 24 24"
+      stroke="currentColor" strokeWidth="3" fill="none"
+      strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0 -18" /><path d="M16 12l-4 -4" /><path d="M16 12h-8" /><path d="M12 16l4 -4" />
+    </svg>
+  )
+}
+
+export function IconShowAd(props) {
+  return (
+    <svg height="1em" width="1em" viewBox="0 0 24 24"
+      stroke="currentColor" strokeWidth="3" fill="none"
+      strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-6" />
+      <path d="M11 13l9 -9" /><path d="M15 4h5v5" />
+    </svg>
+  )
+}
