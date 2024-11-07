@@ -13,7 +13,7 @@ import { Selection } from "./components/Selection";
 
 function CannotSkipLabel({ children }) {
   return (
-    <div className="p-[3px] text-gray-600 opacity-20 text-sm text-center">{children}</div>
+    <div className="p-1 text-gray-600 opacity-20 text-sm text-center">{children}</div>
   )
 }
 
@@ -32,26 +32,30 @@ function SkipLevelButton({ onSkip }) {
   }
 
   useEffect(() => {
-    const tmo = setInterval(() => {
+    function checkStatus() {
       setRewardIsAvailable(window.adInterface.isRewardAvailable());
       setAdIsReady(window.adInterface.isAdLoaded());
-    }, 500);
+    }
+    const tmo = setInterval(checkStatus, 500);
+    checkStatus();
     return () => clearInterval(tmo);
   }, []);
 
   if (rewardIsAvailable) {
     return (
-      <Block><Button special={true} onClick={onSkipClick}>
-        skip level&nbsp;<Blinker times={6}><IconSkip /></Blinker>
-      </Button></Block>
+      <button key={"buttonSkip"} onClick={onSkipClick} className="flex justify-center items-center p-1 text-sm gap-1 rounded-full text-button 
+      active:bg-white active:bg-opacity-20 active:brightness-125">
+        skip level <Blinker times={6}><IconSkip /></Blinker>
+      </button>
     )
   }
 
   if (adIsReady) {
     return (
-      <Block><Button special={true} onClick={onShowClick}>
-        watch ad to skip level&nbsp;<Blinker times={6}><IconShowAd /></Blinker>
-      </Button></Block>
+      <button key={"buttonWatch"} onClick={onShowClick} className="flex justify-center items-center p-1 text-sm gap-1 rounded-full text-button 
+       active:brightness-125 active:bg-white active:bg-opacity-20">
+        watch ad to skip level <Blinker times={6}><IconShowAd /></Blinker>
+      </button >
     )
   }
   return <CannotSkipLabel>cannot skip - no ads available</CannotSkipLabel>
