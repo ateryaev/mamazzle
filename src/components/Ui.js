@@ -21,9 +21,9 @@ export function Title({ children, onBack }) {
 
 export function Button({ children, disabled, onClick, special }) {
   return (
-    <button onClick={() => { beepButton(); onClick() }}
+    <button onClick={() => { onClick(); beepButton(); }}
       onPointerDown={() => !disabled && preBeepButton()}
-      className="flex-1 flex  p-4 items-center
+      className="flex-1 flex  p-4 items-center overflow-hidden
       min-h-[59px] justify-center w-full
       text-white
       bg-button

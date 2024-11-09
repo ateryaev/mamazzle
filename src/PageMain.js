@@ -8,6 +8,7 @@ import { Blinker } from "./components/Blinker";
 import { Item, ItemAny, ItemLocked } from "./components/Board";
 import { IconBxsLockAlt } from "./components/Icons";
 import { useState } from "react";
+import { preBeepButton } from "./utils/Beep";
 
 function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
@@ -15,11 +16,15 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
     <Button onClick={onClick} disabled={disabled}>
       <div className="uppercase flex-1 text-left">
         {word}
-        {!disabled && solved === 0 && <Blinker className=" block text-xs h-0 lowercase -translate-y-1 opacity-50">new</Blinker>}
+        {!disabled && solved === 0 &&
+          <Blinker className="block text-xs h-0 -translate-y-1">
+            <span className="bg-white text-button px-1 text-[10px] rounded-sm bg-opacity-50">NEW</span>
+          </Blinker>
+        }
         {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">solve {leftToUnlock} to unlock</div>}
       </div>
       {!disabled && <div className="text-right">{solved}/{total}
-        {skipped > 0 && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">{skipped} skipped</div>}
+        {skipped > 0 && <div className="text-xs h-0 lowercase -translate-y-[4px] opacity-50">{skipped} skipped</div>}
       </div>}
       {disabled && <div className=""><IconBxsLockAlt /> </div>}
     </Button>
@@ -43,6 +48,7 @@ export function PageMain({ }) {
   function handleVibroSwitch() {
     updateSettings({ sound, vibro: !vibro })
     setVibro(!vibro);
+    preBeepButton();
   }
   return (
     <Window title={<>mamazzle<br />puzzle</>}>
@@ -137,13 +143,20 @@ export function PageMain({ }) {
 
       <Block>
         <BlockTitle>Settings</BlockTitle>
-        <Button onClick={handleSoundSwitch}>
+        <Button onClick={handleSoundSwitch} className="">
           <div className="flex-1 text-left">Sound Effects</div>
-          <div>{sound ? "ON" : "OFF"}</div>
+          <div className="flex gap-0 bg-white bg-opacity-20 rounded-sm overflow-hidden">
+            <div className="text-xs px-1 bg-white text-button min-w-8 data-[disabled=true]:bg-transparent" data-disabled={sound}>OFF</div>
+            <div className="text-xs px-1 bg-white text-button min-w-8 data-[disabled=true]:bg-opacity-0" data-disabled={!sound}>ON</div>
+          </div>
         </Button>
         <Button onClick={handleVibroSwitch}>
           <div className="flex-1 text-left">Vibration</div>
-          <div>{vibro ? "ON" : "OFF"}</div>
+          <div className="flex text-xs gap-0 bg-white bg-opacity-20 rounded-sm overflow-hidden">
+            <div className="px-1 bg-white text-button min-w-8 data-[disabled=true]:bg-transparent" data-disabled={vibro}>OFF</div>
+            <div className="px-1 bg-white text-button min-w-8 data-[disabled=true]:bg-opacity-0" data-disabled={!vibro}>ON</div>
+          </div>
+
         </Button>
       </Block>
 
