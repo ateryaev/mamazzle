@@ -13,19 +13,21 @@ function LevelButton({ num, active, unsolved, isLast, onSelect, skipped }) {
   const lvl = num.toString().padStart(2, '0');
   return (
     <Button onClick={() => active && onSelect(num)} disabled={!active} special={skipped}>
-      <div className="aspect-square flex-1 flex items-center justify-center">
-        <div className="flex-1">
-          {lvl}
-          {active && unsolved && <Blinker times={0} className="block text-xs h-0 -translate-y-0 
-          "><span className="bg-white text-button px-1 uppercase text-[10px] rounded-sm bg-opacity-50 ">new</span></Blinker>}
+      <div className="aspect-square flex-1 flex items-center justify-center flex-col -m-4">
+        <div className="text-xs opacity-50 -my-1">&nbsp;</div>
+        {lvl}
+        <div className="text-xs -my-1">
+          &nbsp;
+          {active && unsolved && <Blinker className="bg-white text-button px-1 py-[1px] text-[9px] rounded-sm bg-opacity-50">
+            NEW</Blinker>}
+          &nbsp;
         </div>
       </div>
       {isLast &&
         <div className="w-0 self-stretch">
           <div className="bg-white animate-pulse data-[skipped=true]:bg-button w-3 -ml-[6px] -mt-[6px] opacity-20 aspect-square rounded-full text-xs"
             data-skipped={skipped}></div>
-        </div>
-      }
+        </div>}
     </Button>
   )
 }

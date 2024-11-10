@@ -201,14 +201,14 @@ export function PagePlay({ }) {
       {canDemo &&
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2 rounded-md">
           <Button onClick={showMeHow}>
-            <div>
-              SHOW ME HOW TO PLAY
-              <Blinker className="text-sm opacity-90 h-0 mt-[-2px] block"><IconBxsHandUp className="mx-auto" /></Blinker>
+            <div className="grid">
+              <div className="text-nowrap text-ellipsis overflow-hidden">
+                SHOW ME HOW TO PLAY
+              </div>
+              <Blinker className="text-sm opacity-50 h-0 mt-[-2px] block"><IconBxsHandUp className="mx-auto" /></Blinker>
             </div>
           </Button>
         </div>}
-
-
 
       {solved && !demoMode &&
         <div className=" bg-white flex justify-stretch items-stretch p-2 gap-2 rounded-md">
@@ -216,7 +216,7 @@ export function PagePlay({ }) {
           <Button disabled={level + 1 >= LEVELS_PER_WORD} onClick={goNext}>
             <div>
               NEXT
-              {level + 1 < LEVELS_PER_WORD && <Blinker className="text-sm opacity-90 h-0 mt-[-2px] block">
+              {level + 1 < LEVELS_PER_WORD && <Blinker className="text-sm opacity-50 h-0 mt-[-2px] block">
                 <IconBxsHandUp className="mx-auto" /></Blinker>}
             </div>
           </Button>

@@ -23,16 +23,15 @@ export function Button({ children, disabled, onClick, special }) {
   return (
     <button onClick={() => { onClick(); beepButton(); }}
       onPointerDown={() => !disabled && preBeepButton()}
-      className="flex-1 flex  p-4 items-center overflow-hidden
+      className="flex-1 flex  px-4 py-4 items-center overflow-hidden
       min-h-[59px] justify-center w-full
       text-white
       bg-button
-      data-[special=true]:bg-opacity-20 
-      data-[special=true]:border-0
+      data-[special=true]:bg-opacity-30 
       data-[special=true]:text-button
       rounded-sm
       enabled:active:brightness-125
-      disabled:bg-gray-100 disabled:text-gray-400"
+      disabled:bg-gray-100 disabled:text-gray-300"
       data-special={special}
       disabled={disabled}>
       {children}
@@ -102,7 +101,8 @@ export function ProgressBar({ percent }) {
 
 export function BlockTitle({ children }) {
   return (
-    <div className="bg-gray-200 rounded-sm text-gray-600 p-2 h-[59px] flex justify-center items-center gap-2 uppercase">
+    <div className="bg-gray-200 rounded-sm text-gray-600 p-2 min-h-[59px] flex justify-center items-center gap-2 uppercase
+     text-nowrap overflow-hidden">
       {children}
     </div>
   )

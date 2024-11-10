@@ -53,7 +53,7 @@ export function Selection({ selected, needed }) {
             {!isSelected(index) && <QuestionChar />}
           </Fragment>))
         }
-        {!isActive && <div className="uppercase">swipe over the word</div>}
+        {!isActive && <div className="uppercase text-nowrap text-ellipsis overflow-hidden px-2">swipe over the word</div>}
       </BlockTitle>
     </Block>
   );

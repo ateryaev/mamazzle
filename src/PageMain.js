@@ -14,20 +14,30 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
   return (
     <Button onClick={onClick} disabled={disabled}>
-      <div className="uppercase flex-1 text-left">
+      <div className="uppercase flex-1 text-left -my-2">
+        <div className="text-xs invisible -my-1">&nbsp;</div>
         {word}
-        {!disabled && solved === 0 &&
-          <Blinker className="block text-xs h-0 -translate-y-1">
-            <span className="bg-white text-button px-1 text-[10px] rounded-sm bg-opacity-50">NEW</span>
-          </Blinker>
-        }
-        {disabled && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">solve {leftToUnlock} to unlock</div>}
+        <div className="text-xs -my-1">
+          {!disabled && solved === 0 &&
+            <Blinker className="bg-white text-button px-1 py-[1px] text-[9px] rounded-sm bg-opacity-50">
+              NEW
+            </Blinker>}
+          {disabled && <span className="lowercase opacity-50">solve {leftToUnlock} to unlock</span>}
+          &nbsp;
+        </div>
       </div>
-      {!disabled && <div className="text-right">{solved}/{total}
-        {skipped > 0 && <div className="text-xs h-0 lowercase -translate-y-[4px] opacity-50">{skipped} skipped</div>}
+
+      {!disabled && <div className="text-right -my-2">
+        <div className="text-xs invisible -my-1">&nbsp;</div>
+        {solved}/{total}
+        <div className="text-xs -my-1 opacity-50">
+          &nbsp;
+          {skipped > 0 && <>{skipped} skipped</>}
+        </div>
       </div>}
+
       {disabled && <div className=""><IconBxsLockAlt /> </div>}
-    </Button>
+    </Button >
   )
 }
 
@@ -70,12 +80,18 @@ export function PageMain({ }) {
       <Block>
         {getWords().slice(5).map((word) => (
           <Button onClick={() => handleClick(word)} special={true} key={word}>
-            <div className="uppercase flex-1 text-left">
+            <div className="uppercase flex-1 text-left -my-2">
+              <div className="text-xs lowercase opacity-50 -my-1">&nbsp;</div>
               {word}
-              <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">season word</div>
+              <div className="text-xs lowercase opacity-50 -my-1">season word</div>
             </div>
-            <div className="text-right">{getLevelsSolved(word)}/{LEVELS_PER_WORD}
-              {getSkippedCount(word) > 0 && <div className="text-xs h-0 lowercase translate-y-[-4px] opacity-50">{getSkippedCount(word)} skipped</div>}
+            <div className="text-right -my-2">
+              <div className="text-xs invisible -my-1">&nbsp;</div>
+              {getLevelsSolved(word)}/{LEVELS_PER_WORD}
+              <div className="text-xs -my-1 opacity-50">
+                &nbsp;
+                {getSkippedCount(word) > 0 && <>{getSkippedCount(word)} skipped</>}
+              </div>
             </div>
           </Button>
         ))}
