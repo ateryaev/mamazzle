@@ -18,8 +18,8 @@ function LevelButton({ num, active, unsolved, isLast, onSelect, skipped }) {
         {lvl}
         <div className="text-xs -my-1">
           &nbsp;
-          {active && unsolved && <Blinker className="bg-white text-button px-1 py-[1px] text-[9px] rounded-sm bg-opacity-50">
-            NEW</Blinker>}
+          {active && unsolved && <Blinker className="bg-white text-button px-1 py-[1px] text-[9px] rounded-sm bg-opacity-50">NEW</Blinker>}
+          {skipped && <span className="opacity-50 text-xs">skipped</span>}
           &nbsp;
         </div>
       </div>

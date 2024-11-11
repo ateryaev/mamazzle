@@ -31,7 +31,7 @@ export function Button({ children, disabled, onClick, special }) {
       data-[special=true]:text-button
       rounded-sm
       enabled:active:brightness-125
-      disabled:bg-gray-100 disabled:text-gray-300"
+      disabled:bg-gray-100 disabled:text-gray-400"
       data-special={special}
       disabled={disabled}>
       {children}

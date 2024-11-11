@@ -22,7 +22,7 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
             <Blinker className="bg-white text-button px-1 py-[1px] text-[9px] rounded-sm bg-opacity-50">
               NEW
             </Blinker>}
-          {disabled && <span className="lowercase opacity-50">solve {leftToUnlock} to unlock</span>}
+          {disabled && <span className="lowercase opacity-60">solve {leftToUnlock} to unlock</span>}
           &nbsp;
         </div>
       </div>
