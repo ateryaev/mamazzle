@@ -1,6 +1,6 @@
 import { Block, BlockTitle, BlockBody, DotPages, Button, BlockAlarm } from "./components/Ui";
 import { useParams, useNavigate } from "react-router-dom";
-import { getWordAbout, IsGameWordValid, isPlayable, getLastPlayed, getSkippedLevels, getSkippedCount } from "./utils/GameData";
+import { getWordAbout, isPlayable, getLastPlayed, getSkippedLevels, getSkippedCount } from "./utils/GameData";
 import { useEffect, useRef, useState } from "react";
 import { getLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";

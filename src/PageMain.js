@@ -1,7 +1,7 @@
 import { Block, BlockTitle, BlockBody, Button, BlockAlarm } from "./components/Ui";
 import { Window } from "./components/Window";
 import { useNavigate } from "react-router-dom";
-import { getWords, getSettings, getLeftToUnlock, LoadSettings, SaveSettings, updateSettings, getSkippedCount, getTotalLevelsSolved } from "./utils/GameData";
+import { getWords, getSettings, getLeftToUnlock, updateSettings, getSkippedCount, getTotalLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { getLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
@@ -36,7 +36,7 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
         </div>
       </div>}
 
-      {disabled && <div className=""><IconBxsLockAlt /> </div>}
+      {disabled && <IconBxsLockAlt />}
     </Button >
   )
 }
