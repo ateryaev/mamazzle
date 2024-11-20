@@ -52,6 +52,21 @@
         flex-direction: column;
     }
 
+    .feature {
+        width: 1024px;
+        height: 500px;
+        background-color: #fff;
+        overflow: hidden;
+        gap: 32px;
+        padding: 20px 32px;
+        xpadding: 0 96px 0 96px;
+        display: flex;
+        xflex-direction: column;
+        xtext-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+    }
+
     .screen.invert {
         flex-direction: column-reverse;
     }
@@ -61,64 +76,135 @@
         border-radius: 50px;
         box-shadow: 0 0 0 40px #fff, 0 0 64px 0 #000;
     }
+
+    .feature>* {
+        width: 22%;
+        border-radius: 12px;
+        box-shadow: 0 0 0 10px #fff, 0 0 16px 0 #000;
+        xmargin: 0 -60px;
+    }
+
+    .ftitle {
+        xposition: absolute;
+        xz-index: 100;
+        xbackground-color: #D6E4EE;
+        font-size: 24px;
+        font-weight: 800;
+        text-align: justify;
+        padding: x16px;
+        color: #37a;
+        text-shadow: 0 0 5px #acf;
+        box-shadow: none;
+        xborder-radius: 12px;
+        xbox-shadow: 0 0 0 10px #fff, 0 0 16px 0 #000;
+        xborder-top-left-radius: 0 !important;
+        xborder-top-right-radius: 0 !important;
+        xtop: 164px;
+        xmargin: 0px 128px;
+        xwidth: 768px;
+        xheight: 100%;
+        letter-spacing: 1px;
+        xopacity: 0.9;
+        margin: -10px;
+        padding: 16px;
+        text-transform: uppercase;
+        xoverflow: hidden;
+        word-break: break-all;
+    }
 </style>
 
-<body style="background-color: black;padding: 0px; margin: 0; display: flex; gap:2px; width: fit-content;">
+<body style="background-color: #eee;"
+    xxstyle="background-color: black;padding: 0px; margin: 0; display: flex; gap:2px; width: fit-content;">
 
-    <div class="screen">
-        <div class="title">
+    <div class="feature">
+        <div style="flex: 1 1 0%;text-align: left;" class="ftitle">
+            MAMAZZLE
             UNIQUE WORD GAME
-            <small>Now on Android!</small>
-        </div>
-        <img src="screen7.png">
-    </div>
-
-    <div class="screen invert">
-        <div class="title">
             EASY TO LEARN
-            <small>Hard to Master!</small>
-        </div>
-        <img src="screen5.png">
-    </div>
-
-    <div class="screen">
-        <div class="title">
+            Hard to Master
             FUN FOR ALL AGES
-            <small>Play Anytime, Anywhere!</small>
-        </div>
-        <img src="screen2.png">
-    </div>
-    <div class="screen invert">
-        <div class="title">
-            HUNDREDS OF LEVELS
-            <small>And New Every Season</small>
-        </div>
-        <img src="screen3.png">
-    </div>
-    <div class="screen">
-        <div class="title">
-
-            COLORIZE THE BOARD
-            <small>Swipe, Solve, and Win!</small>
-        </div>
-        <img src="screen6.png">
-    </div>
-
-    <div class="screen invert">
-        <div class="title">
             PLAY OFFLINE
-            <small> Enjoy Mamazzle Anytime</small>
+            Anytime Anywhere
+            HUNDREDS OF LEVELS
+            New Every Season
+            COLORIZE THE BOARD
+            Swipe Solve AND Win
+            BECOME THE MAMASTER
         </div>
-        <img src="screen4.png">
+        <img src="screen7.png" style="xtranslate: 10px 50px; xrotate: -18deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen6.png" style="xtranslate: 10px 50px; xrotate: 6deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen3.png" style="xtranslate: 10px 50px; xrotate: 12deg; scale: 0.75xx; xposition:absolute;">
+    </div>
+    <!-- <div class="ftitle" style="">
+        MAMAZZLE
+        <small>Unique Word Game</small>
+    </div><div class="feature">
+        <img src="screen7.png" style="xtranslate: 10px 50px; rotate: -18deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen5.png" style="xtranslate: 10px 50px; rotate: -12deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen2.png" style="xtranslate: 10px 50px; rotate: -6deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen4.png" style="xtranslate: 10px 50px; rotate: 0deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen6.png" style="xtranslate: 10px 50px; rotate: 6deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen3.png" style="xtranslate: 10px 50px; rotate: 12deg; scale: 0.75xx; xposition:absolute;">
+        <img src="screen8.png" style="xtranslate: 10px 50px; rotate: 18deg; scale: 0.75xx; xposition:absolute;">
+    </div> -->
+    <br>
+    <div style="background-color: black;padding: 0px; margin: 0; display: flex; gap:2px; width: fit-content;">
+        <div class="screen">
+            <div class="title">
+                UNIQUE WORD GAME
+                <small>Now on Android!</small>
+            </div>
+            <img src="screen7.png">
+        </div>
+
+        <div class="screen invert">
+            <div class="title">
+                EASY TO LEARN
+                <small>Hard to Master!</small>
+            </div>
+            <img src="screen5.png">
+        </div>
+
+        <div class="screen">
+            <div class="title">
+                FUN FOR ALL AGES
+                <small>Play Anytime, Anywhere!</small>
+            </div>
+            <img src="screen2.png">
+        </div>
+        <div class="screen invert">
+            <div class="title">
+                HUNDREDS OF LEVELS
+                <small>And New Every Season</small>
+            </div>
+            <img src="screen3.png">
+        </div>
+        <div class="screen">
+            <div class="title">
+
+                COLORIZE THE BOARD
+                <small>Swipe, Solve, and Win!</small>
+            </div>
+            <img src="screen6.png">
+        </div>
+
+        <div class="screen invert">
+            <div class="title">
+                PLAY OFFLINE
+                <small> Enjoy Mamazzle Anytime</small>
+            </div>
+            <img src="screen4.png">
+        </div>
+
+        <div class="screen">
+            <div class="title">
+                BECOME THE MAMASTER
+                <small>Master Every Puzzle!</small>
+            </div>
+            <img src="screen8.png">
+        </div>
     </div>
 
-    <div class="screen">
-        <div class="title">
-            BECOME THE MAMASTER
-            <small>Master Every Puzzle!</small>
-        </div>
-        <img src="screen8.png">
-    </div>
 
 </body>
 
