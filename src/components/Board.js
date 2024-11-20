@@ -3,8 +3,8 @@ import { ColRow } from "../utils/ColRow";
 import { IconArrowRight, IconAsterisk } from "./Icons";
 
 export function Item({ char, index, selected, selectionTo, readonly, ...props }) {
-  const isEmpty = char == " ";
-  const isOn = !isEmpty && char == char.toUpperCase();
+  const isEmpty = char === " ";
+  const isOn = !isEmpty && char === char.toUpperCase();
   const [counter, setCounter] = useState(0);
   const [style, setStyle] = useState({});
   const [hilit, setHilit] = useState(false);
@@ -19,7 +19,6 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
       const x = (Math.random() * 4 - 2);
       const y = (Math.random() * 4 - 2);
       const a = (Math.random() * 4 - 2);
-      const o = (Math.random() > 0.5 ? 100 : 70);
       let newStyle = { ...style };//{translate:`${x}px ${y}px`, }
       if (counter % 2 === 10) newStyle = { ...newStyle, rotate: `${a}deg` }
       if (counter % 2 === 10) newStyle = { ...newStyle, translate: `${x}px ${y}px` }
@@ -37,7 +36,7 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
       setCounter(counter + 1);
     }, Math.random() * 1000 + 500)
     return () => clearTimeout(tmo);
-  }, [readonly, counter]);
+  }, [readonly, counter, isEmpty]);
 
   return (<div {...props} style={style} className="text-[24px] aspect-square uppercase flex 
     justify-center items-center border-8 border-gray-100 bg-gray-100 touch-none select-none
@@ -88,8 +87,7 @@ export function Item({ char, index, selected, selectionTo, readonly, ...props })
 }
 
 export function ItemLocked({ char, index, selected, selectionTo, readonly, ...props }) {
-  const isEmpty = char == " ";
-  const isOn = true;
+  const isEmpty = char === " ";
 
   return (<div {...props} className="text-[24px] aspect-square uppercase flex 
   justify-center items-center border-[6px] border-gray-600 text-gray-600
@@ -205,13 +203,13 @@ export function Board({ chars, mods, selection, onSelecting, onSelectEnd, readon
     let count = 0;
     for (let i = 0; i < chars.length; i++) {
       const key = chars.charAt(i).toUpperCase();
-      if (key != " " && !letters.hasOwnProperty(key)) {
+      if (key !== " " && !letters.hasOwnProperty(key)) {
         letters[key] = count;
         count++;
       }
       setCharClass(letters);
     }
-  }, []);
+  }, [chars, mods]);
 
   function IsSelected(index) {
     for (let pos of selection) {

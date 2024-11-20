@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { IconArrowBack, IconGithub } from "./Icons";
+import { IconArrowBack } from "./Icons";
 import { RoundButton } from "./Ui";
 
 export function Window({ children, title, onBack }) {

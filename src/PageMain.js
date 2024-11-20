@@ -41,7 +41,7 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
   )
 }
 
-export function PageMain({ }) {
+export function PageMain() {
   const navigate = useNavigate();
   const [sound, setSound] = useState(getSettings().sound);
   const [vibro, setVibro] = useState(getSettings().vibro);
@@ -72,7 +72,7 @@ export function PageMain({ }) {
     <Window title={<>mamazzle<br />puzzle</>}>
       {getTotalLevelsSolved() < 64 * 5 && <Block><BlockTitle>CHOOSE A WORD</BlockTitle></Block>}
 
-      {getTotalLevelsSolved() == 64 * 5 &&
+      {getTotalLevelsSolved() === 64 * 5 &&
         <Block><BlockAlarm>YOU ARE MAMASTER</BlockAlarm></Block>}
       <Block>
         {getWords().slice(0, 5).map((word, index) => (

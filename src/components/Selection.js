@@ -18,7 +18,7 @@ function GoodChar({ char }) {
     </div>
   )
 }
-function QuestionChar({ }) {
+function QuestionChar() {
   return (
     <div className="aspect-square rounded-sm w-[30px] flex justify-center items-center bg-gray-50 text-gray-200">
       ?
@@ -29,7 +29,7 @@ export function Selection({ selected, needed }) {
 
   const isActive = useMemo(() => selected.length > 0, [selected]);
   const selectedChars = useMemo(() => selected.toUpperCase().split(""), [selected]);
-  const neededChars = useMemo(() => needed.toUpperCase().split(""), [selected]);
+  const neededChars = useMemo(() => needed.toUpperCase().split(""), [needed]);
 
   function isSelectionAny(index) {
     return selectedChars[index] === "*";

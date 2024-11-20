@@ -67,8 +67,8 @@ export function getWordAbout(word) {
     case "bamboo": return "Bamboo epitomizes nature's versatility and resilience, with its slender stalks bending but never breaking in the winds of change. From sturdy construction material to delicate crafts, it symbolizes adaptability and sustainability, flourishing in diverse ecosystems while offering a myriad of practical and artistic possibilities, rooted in ancient traditions yet embracing modern innovation."
     case "coffee": return "Coffee is more than a beverage. It's a ritual, a conversation starter, and a global connector. From the first sip of its bold aroma to the last lingering taste, coffee invigorates the senses and sparks creativity. It's the fuel of early mornings and late nights, a companion in solitude and a catalyst for camaraderie. Across cultures and continents, coffee culture thrives, weaving tales of cultivation, craftsmanship, and community around each cherished cup."
     case "freeze": return 'Freeze captures the stillness and transformative power of cold, halting movement and preserving moments in time. Whether it’s the frost that coats winter landscapes or the preservation of food and memories, freezing symbolizes both fragility and endurance, a pause in nature that often prepares for growth and renewal.'
+    default: return "Nothing to say..."
   }
-  return "Nothing to say...";
 }
 
 export function getLevelsSolved(word) {

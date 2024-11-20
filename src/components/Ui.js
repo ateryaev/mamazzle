@@ -110,13 +110,8 @@ export function BlockTitle({ children }) {
   )
 }
 export function BlockAlarm({ children }) {
-  const star1 = useRef(null);
-  const star2 = useRef(null);
-  const star3 = useRef(null);
   const [step, setStep] = useState(0);
   const scope = useRef(null)
-  //const [scope, animate] = useAnimate()
-
 
   useEffect(() => {
     const tmo = setTimeout(() => {
@@ -139,7 +134,6 @@ export function BlockAlarm({ children }) {
         svg.style.transition = `all ${scale + 1}s`;
       }, 10);
       setStep(step + 1);
-      //setStep(step + 1);
     }, 200);
     return () => clearTimeout(tmo);
   }, [step])

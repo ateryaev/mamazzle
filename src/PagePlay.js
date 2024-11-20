@@ -61,7 +61,7 @@ function SkipLevelButton({ onSkip }) {
   return <CannotSkipLabel>cannot skip - no ads available</CannotSkipLabel>
 }
 
-export function PagePlay({ }) {
+export function PagePlay() {
   const navigate = useNavigate();
   const routerParam = useParams();
 
@@ -72,7 +72,7 @@ export function PagePlay({ }) {
   const [demoStep, setDemoStep] = useState(0);
 
   const [history, setHistory] = useState(getLevelHistory(word, level).history);
-  const [mods, setMods] = useState(getLevelHistory(word, level).mods);
+  const mods = getLevelHistory(word, level).mods;
   const [historySlot, setHistorySlot] = useState(getLevelHistory(word, level).slot);
 
   const [selection, setSelection] = useState([]);
@@ -83,15 +83,15 @@ export function PagePlay({ }) {
 
 
 
-  const progress = useMemo(() => GamePlay.progress(GamePlay.invert(chars, selection, mods)).percent, [chars, selection]);
+  const progress = useMemo(() => GamePlay.progress(GamePlay.invert(chars, selection, mods)).percent, [chars, selection, mods]);
   const solved = useMemo(() => GamePlay.progress(chars).percent === 100, [chars]);
   const isEasyLevel = useMemo(() => level < 6, [level]);
   const canDemo = useMemo(() => isEasyLevel && !demoMode && historySlot === 0 && selection.length === 0, [demoMode, historySlot, selection, isEasyLevel]);
 
-  const wasSkipped = useMemo(() => { return isLevelSkipped(word, level) }, [level, word, solved]);
-  const wasSolved = useMemo(() => { return !isLevelSkipped(word, level) && level < getLevelsSolved(word) }, [level, word, solved]);
-  const isNew = useMemo(() => { return level === getLevelsSolved(word) }, [level, word, solved]);
-  const skippedCount = useMemo(() => getSkippedCount(word), [word, level, solved])
+  const wasSkipped = useMemo(() => { return isLevelSkipped(word, level) }, [level, word]);
+  const wasSolved = useMemo(() => { return !isLevelSkipped(word, level) && level < getLevelsSolved(word) }, [level, word]);
+  const isNew = useMemo(() => { return level === getLevelsSolved(word) }, [level, word]);
+  const skippedCount = useMemo(() => getSkippedCount(word), [word])
 
   function addSlot(newChars) {
     let newHistory = history.slice(0, historySlot + 1);
@@ -124,7 +124,7 @@ export function PagePlay({ }) {
   function handleSelecting(pos) {
     const preLength = selection.length;
     const newSelection = GamePlay.touchAt(pos, chars, selection).slice(0, word.length);
-    if (newSelection.length != preLength) {
+    if (newSelection.length !== preLength) {
       beepSwipe(newSelection.length);
     }
     setSelection(newSelection);
@@ -147,7 +147,7 @@ export function PagePlay({ }) {
       return;
     }
     updateLastPlayed(word, level);
-  }, [word, level]);
+  }, [word, level, navigate]);
 
   useEffect(() => {
     if (!demoMode) return;
@@ -172,7 +172,7 @@ export function PagePlay({ }) {
     }, (subIndex === word.length) ? 500 : (subIndex <= 1 ? 300 : 100));
 
     return () => clearTimeout(tmo);
-  }, [demoMode, demoStep, selection, solution]);
+  }, [demoMode, demoStep, selection, solution, /*handleSelectEnd, handleSelecting, solved, word.length*/]);
 
   function showMeHow() {
     setDemoStep(0);

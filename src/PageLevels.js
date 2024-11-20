@@ -45,7 +45,7 @@ function LevelsPage({ start, solved, total, onSelect, lastPlayed, skipped }) {
             isLast={lastPlayed === start + index}
             active={start + index <= solved}
             skipped={skipped.includes(start + index)}
-            unsolved={start + index == solved} />
+            unsolved={start + index === solved} />
         ))}
       </div>
     </div>
@@ -53,7 +53,7 @@ function LevelsPage({ start, solved, total, onSelect, lastPlayed, skipped }) {
 }
 
 
-export function PageLevels({ }) {
+export function PageLevels() {
   const routerParam = useParams();
 
   const pageCount = Math.floor((LEVELS_PER_WORD + pageSize - 1) / pageSize);
@@ -85,7 +85,7 @@ export function PageLevels({ }) {
       navigate("/", { replace: true });
     }
     scroller.current.children[currentPage].scrollIntoView({ block: 'nearest' });
-  }, []);
+  }, [currentPage, navigate, routerParam.word]);
 
   // useEffect(() => {
   //   changePage(pageIndex);
