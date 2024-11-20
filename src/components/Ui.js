@@ -43,14 +43,24 @@ export function RoundButton({ disabled, children, onClick, isDark }) {
   return (
     <button disabled={disabled} onClick={() => { beepButton(); onClick() }}
       onPointerDown={() => !disabled && preBeepButton()}
-      data-dark={isDark}
+      data-dark={!!isDark}
       className="rounded-full   aspect-square items-center flex justify-center
       text-xl border-8 h-[59px]
       text-gray-600 border-gray-600 
-      enabled:active:text-white enabled:active:bg-gray-600
-      data-[dark=true]:text-white data-[dark=true]:border-white
-      enabled:active:data-[dark=true]:text-accent 
-      enabled:active:data-[dark=true]:bg-white
+      
+      enabled:active:text-white 
+      enabled:active:bg-gray-600
+      
+      data-[dark=true]:text-white 
+      data-[dark=true]:border-white
+      data-[dark=true]:enabled:active:text-accent
+      data-[dark=true]:enabled:active:bg-white
+
+      data-[dark=true]:dark:enabled:text-gray-800
+      data-[dark=true]:dark:enabled:border-gray-800
+      data-[dark=true]:dark:enabled:active:bg-gray-800
+      data-[dark=true]:dark:enabled:active:text-gray-300
+
       disabled:opacity-20 disabled:saturate-0
       ">
       {children}

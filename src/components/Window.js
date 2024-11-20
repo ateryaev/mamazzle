@@ -16,7 +16,7 @@ export function Window({ children, title, onBack }) {
     <div className="min-h-svh w-[360px] bg-gray-300">
 
       <div className="justify-between bg-accent flex gap-2 p-4 pt-8 sticky -top-4 -mt-4 z-10
-        text-white dark:text-black dark:text-opacity-80 text-[24px] uppercase" onClick={handleTitleClick}>
+        text-white dark:bg-gray-300 dark:text-gray-800 text-[24px] uppercase" onClick={handleTitleClick}>
         {onBack && <RoundButton onClick={onBack} isDark={true}><IconArrowBack /></RoundButton>}
         <div className="flex-1 justify-end flex items-center p-2 text-[24px] uppercase
           data-[main=true]:justify-center data-[main=true]:text-center py-3"
