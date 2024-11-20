@@ -27,6 +27,7 @@ export function Button({ children, disabled, onClick, special }) {
       min-h-[59px] justify-center w-full
       text-white
       bg-button
+      dark:bg-opacity-80
       data-[special=true]:bg-opacity-30 
       data-[special=true]:text-button
       rounded-sm
@@ -43,12 +44,13 @@ export function RoundButton({ disabled, children, onClick, isDark }) {
     <button disabled={disabled} onClick={() => { beepButton(); onClick() }}
       onPointerDown={() => !disabled && preBeepButton()}
       data-dark={isDark}
-      className="rounded-full  aspect-square items-center flex justify-center
+      className="rounded-full   aspect-square items-center flex justify-center
       text-xl border-8 h-[59px]
       text-gray-600 border-gray-600 
       enabled:active:text-white enabled:active:bg-gray-600
       data-[dark=true]:text-white data-[dark=true]:border-white
-      enabled:active:data-[dark=true]:text-accent enabled:active:data-[dark=true]:bg-white
+      enabled:active:data-[dark=true]:text-accent 
+      enabled:active:data-[dark=true]:bg-white
       disabled:opacity-20 disabled:saturate-0
       ">
       {children}
@@ -76,7 +78,7 @@ export function ProgressBar({ percent }) {
 
   useEffect(() => {
     setRender(percent);
-  }, []);
+  }, [percent]);
 
   useEffect(() => {
     const tmo = setTimeout(() => {
@@ -144,7 +146,9 @@ export function BlockAlarm({ children }) {
 
 
   return (
-    <div className="bg-gray-600 overflow-hidden rounded-sm text-white p-2 h-[59px] flex justify-center items-center gap-0 uppercase">
+    <div className=" bg-gray-600 overflow-hidden rounded-sm 
+    text-white p-2 h-[59px] flex justify-center items-center gap-0 uppercase
+    dark:bg-gray-300 dark:text-gray-800">
       <div className="h-0 w-0 whitespace-nowrap flex justify-center items-center">{children}</div>
       <div ref={scope} className="h-0 flex justify-center items-center">
         <IconStar className="m-[-25px] opacity-0 flex justify-center items-center" />

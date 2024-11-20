@@ -14,7 +14,7 @@ export function IconGithub() {
 
 export function IconArrowBack(props) {
   return (
-    <svg viewBox="0 0 512 512" fill="currentColor" height="1em" width="1em" {...props}>
+    <svg className="invertx" viewBox="0 0 512 512" fill="currentColor" height="1em" width="1em" {...props}>
       <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={80}
         d="M244 400L100 256l144-144M120 256h292" /></svg>
   );
@@ -49,7 +49,7 @@ export function IconBxsLockAlt(props) {
 
 export function IconArrowRight() {
   return (
-    <svg viewBox="0 0 16 16" height="50px" width="50px"
+    <svg className="dark:invert" viewBox="0 0 16 16" height="50px" width="50px"
       fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path strokeWidth="3" stroke="rgb(0 0 0/0.1)" d="M4 8 L 12 8 l-2 2 m2 -2 l-2 -2" />
       <path strokeWidth="2" stroke="white" d="M4 8 L 12 8 l-2 2 m2 -2 l-2 -2" />

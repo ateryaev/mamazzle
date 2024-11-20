@@ -9,7 +9,7 @@ export function updateLastPlayed(word, level) { data.lastPlayed[word] = level; }
 
 function loadAll() {
   if (data.loaded) return;
-  data.settings = loadFromLocalStorage('mamazzle_settings', { sound: true, vibro: true });
+  data.settings = loadFromLocalStorage('mamazzle_settings', { sound: true, vibro: true, dark: false });
   data.progress = loadFromLocalStorage('mamazzle_progress', {});
   data.skipped = loadFromLocalStorage('mamazzle_skipped', []);
   console.log("LOAD", data.settings, data.progress, data.skipped);
@@ -28,8 +28,8 @@ export function getSettings() {
   return data.settings;
 }
 
-export function updateSettings({ sound, vibro }) {
-  data.settings = { sound, vibro };
+export function updateSettings({ sound, vibro, dark }) {
+  data.settings = { sound, vibro, dark };
   saveAll();
 }
 

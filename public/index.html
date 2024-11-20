@@ -12,24 +12,52 @@
 </head>
 
 <script>
+  function RunNative(fun, ...args) {
+    try {
+      if (typeof (NativeWrapper) !== 'undefined') {
+        NativeWrapper[fun](...args);
+        return true;
+      }
+    } catch (e) {
+      console.error("RunNative error", e);
+    }
+    return false;
+  }
+
   const maxRatio = 0.6;
   const defaultWidth = 360.0;
   let currentRatio = 0;
-  window.onresize = () => {
+
+  window.themeColors = ["#229966", "#D1D5DB"];
+
+  function updateSizeTheme() {
     const ratio = window.outerWidth / window.outerHeight;
-    if (ratio === currentRatio) return;
     currentRatio = ratio;
     let newWidth = ratio > maxRatio ? defaultWidth * ratio / maxRatio : defaultWidth;
     newWidth = Math.round(newWidth);
     const newContent = `width=${newWidth}, user-scalable=0`;
     document.getElementById("viewportMeta").content = newContent;
-    const newTopColor = ratio > maxRatio ? "#000000" : "#229966";
+    const newTopColor = ratio > maxRatio ? "#000000" : window.themeColors[0];
     document.getElementById("themeColor").content = newTopColor;
     console.log("THEME", document.getElementById("themeColor").content);
-
-    if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.recolor(newTopColor, "#D1D5DB");
+    RunNative("recolor", newTopColor, window.themeColors[1]);
   }
-  window.onresize();
+
+  window.onresize = () => {
+    if (window.outerWidth / window.outerHeight !== currentRatio) updateSizeTheme();
+  }
+
+  window.changeTheme = (dark) => {
+    const html = document.querySelector("html");
+    if (html) {
+      html.className = dark ? "dark" : "";
+    }
+    window.themeColors = dark ? ["#DD6699", "#2E2A24"] : ["#229966", "#D1D5DB"];
+    updateSizeTheme();
+  }
+
+  updateSizeTheme();
+
 
   window.adInterface = new function () {
 
@@ -46,10 +74,11 @@
       if (state !== STATE_INIT) return;
       state = STATE_LOADING;
       console.log("Asking NativeWrapper to load ad...");
-      if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.loadAd();
+      //RunNative("loadAd", "ca-app-pub-3940256099942544/5224354917"); //test ad
+      RunNative("loadAd");
     }
 
-    loadAd();// - uncomment to load ad on start, TBD after releasing
+    setTimeout(() => { loadAd(); }, 5000);
 
     //To use from Web side:
     this.isAdLoaded = () => {
@@ -63,7 +92,7 @@
       if (state !== STATE_AD_LOADED) return;
       state = STATE_AD_SHOWING;
       console.log("Showing ad...");
-      if (typeof (NativeWrapper) !== 'undefined') NativeWrapper.showAd();
+      RunNative("showAd");
     }
 
     this.collectReward = () => {
@@ -97,14 +126,9 @@
     }
   }
 
-  window.getNativeWrapper = () => {
-    if (typeof (NativeWrapper) !== 'undefined') return NativeWrapper;
-    return null;
-  }
-
 </script>
 
-<body class="flex justify-center" style="background: #000;">
+<body class="flex justify-center dark:invert bg-black">
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 </body>

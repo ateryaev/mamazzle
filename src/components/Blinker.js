@@ -18,7 +18,7 @@ export function Blinker({ children, period, times, ...props }) {
       setCounter(counter + 1);
     }, period);
     return () => clearTimeout(tmo);
-  }, [counter]);
+  }, [counter, period, times]);
 
   return (
     <span {...props} style={{ visibility: visibility ? "visible" : "hidden" }}>

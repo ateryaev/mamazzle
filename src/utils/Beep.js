@@ -30,8 +30,8 @@ export function beep(vol, freq, delay, duration) {
 function vibro(param) {
   if (!getSettings().vibro) return;
   try {
-    if (window.getNativeWrapper()) window.getNativeWrapper().vibrate();
-    else if (navigator.vibrate) navigator.vibrate(param);
+    if (window.RunNative("vibrate")) return;
+    if (navigator.vibrate) navigator.vibrate(param);
   } catch (e) {
     //ignore
   }
