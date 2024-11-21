@@ -84,13 +84,85 @@ export function updateLevelsSolved(word, levels) {
   }
 }
 
+export function calculateScore() {
+  let total = 0;
+
+  const mainWords = getWords().slice(0, 5);
+  for (let w of mainWords) {
+    total += (getLevelsSolved(w) - getSkippedCount(w)) * 100;
+  }
+
+  const seasWords = getWords().slice(5)
+  for (let w of seasWords) {
+    total += (getLevelsSolved(w) - getSkippedCount(w)) * 25;
+  }
+  return total;
+}
+
+export function syncWithCloud(cloud) {
+
+  console.log("SYNCING WITH CLOUD: ", cloud)
+
+  // cloud = {
+  //   progress: { "radar": 0, "mama": 11 },
+  //   skipped: [{ word: "radar", level: 57 }, { word: "mama", level: 7 }, { word: "mama", level: 10 }]
+  // }
+
+  const words = getWords()
+
+  let newSkipped = []
+  let newProgress = {}
+
+  try {
+    for (let w of words) {
+      const wpr1 = data.progress[w] || 0;
+      const wpr2 = cloud.progress[w] || 0;
+      const wprMax = Math.max(wpr1, wpr2);
+      const wprMin = Math.min(wpr1, wpr2);
+
+      newProgress[w] = wprMax;
+
+      for (let lvl = 0; lvl < wprMax; lvl++) {
+        const skippedInData = isskipped(w, lvl, data.skipped);
+        const skippedInCloud = isskipped(w, lvl, cloud.skipped);
+        if (lvl < wprMin && skippedInData && skippedInCloud) {
+          newSkipped.push({ word: w, level: lvl });
+        } else if (lvl >= wprMin && (skippedInData || skippedInCloud)) {
+          newSkipped.push({ word: w, level: lvl });
+        }
+      }
+    }
+  } catch (e) {
+    newSkipped = data.skipped;
+    newProgress = data.progress;
+  }
+
+  console.log("newSkipped", ...newSkipped)
+  console.log("newProgress", newProgress)
+
+  data.skipped = newSkipped;
+  data.progress = newProgress;
+  saveAll();
+
+  return { skipped: newSkipped, progress: newProgress };
+}
+
+
+function unskip(word, level, skippedArray) {
+  return skippedArray.filter((wordlevel) => wordlevel.word !== word || wordlevel.level !== level);
+}
+
+function isskipped(word, level, skippedArray) {
+  for (let skipped of skippedArray) {
+    if (skipped.word === word && skipped.level === level) return true;
+  }
+}
+
 export function setSkipped(word, level) {
   //only last level can be skipped
   if (level !== getLevelsSolved(word)) return;
   //check if already skipped
-  for (let level of data.skipped) {
-    if (level.word === word && level.level === level) return;
-  }
+  if (isskipped(word, level, data.skipped)) return;
   data.skipped.push({ word, level });
   updateLevelsSolved(word, level + 1);
   saveAll();
@@ -98,10 +170,7 @@ export function setSkipped(word, level) {
 
 export function isLevelSkipped(word, level) {
   loadAll();
-  for (let skipped of data.skipped) {
-    if (skipped.word === word && skipped.level === level) return true;
-  }
-  return false;
+  return isskipped(word, level, data.skipped);
 }
 
 export function getSkippedCount(word) {
@@ -154,10 +223,12 @@ export function getLevelHistory(word, level) {
   return { history: [levelData.chars], slot: 0, solution: levelData.solution, mods: levelData.mods };
 }
 
+
 export function updateLevelHistory(word, level, { history, slot }) {
   data.history[getHistoryKey(word, level)] = { history: history.slice(), slot };
   if (GamePlay.progress(history[slot]).percent === 100) {
-    data.skipped = data.skipped.filter((wordlevel) => wordlevel.word !== word || wordlevel.level !== level);
+    data.skipped = unskip(word, level, data.skipped);
+    //data.skipped = data.skipped.filter((wordlevel) => wordlevel.word !== word || wordlevel.level !== level);
     console.log(data.skipped);
     updateLevelsSolved(word, level + 1);
     saveAll();

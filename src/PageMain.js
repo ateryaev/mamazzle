@@ -1,7 +1,7 @@
 import { Block, BlockTitle, BlockBody, Button, BlockAlarm } from "./components/Ui";
 import { Window } from "./components/Window";
 import { useNavigate } from "react-router-dom";
-import { getWords, getSettings, getLeftToUnlock, updateSettings, getSkippedCount, getTotalLevelsSolved } from "./utils/GameData";
+import { getWords, getSettings, getLeftToUnlock, updateSettings, getSkippedCount, getTotalLevelsSolved, calculateScore } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { getLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
@@ -9,6 +9,7 @@ import { Item, ItemAny, ItemLocked } from "./components/Board";
 import { IconBxsLockAlt } from "./components/Icons";
 import { useState } from "react";
 import { preBeepButton } from "./utils/Beep";
+import { PlayGamesBlock } from "./components/PlayGamesBlock";
 
 function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
@@ -83,9 +84,7 @@ export function PageMain() {
             leftToUnlock={getLeftToUnlock(index)}
             total={LEVELS_PER_WORD} onClick={() => handleClick(word)} />
         ))}
-      </Block>
 
-      <Block>
         {getWords().slice(5).map((word) => (
           <Button onClick={() => handleClick(word)} special={true} key={word}>
             <div className="uppercase flex-1 text-left -my-2">
@@ -105,6 +104,7 @@ export function PageMain() {
         ))}
       </Block>
 
+      <PlayGamesBlock />
       <Block>
         <BlockTitle>HOW TO PLAY</BlockTitle>
         <BlockBody>

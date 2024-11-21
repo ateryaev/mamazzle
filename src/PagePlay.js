@@ -10,6 +10,7 @@ import { Window } from "./components/Window";
 import { LEVELS_PER_WORD, MAX_WORD_LEVELS_CAN_SKIP } from "./utils/Config";
 import { beepSolve, beepSwipe, beepSwipeCancel, beepSwipeComplete } from "./utils/Beep";
 import { Selection } from "./components/Selection";
+import { usePlayGames } from "./components/PlayGamesContext";
 
 function CannotSkipLabel({ children }) {
   return (
@@ -65,6 +66,8 @@ export function PagePlay() {
   const navigate = useNavigate();
   const routerParam = useParams();
 
+  const { syncWithPlayGames } = usePlayGames();
+
   const word = routerParam.word;
   const level = routerParam.lvl * 1;
 
@@ -114,6 +117,7 @@ export function PagePlay() {
       beepSwipeComplete();
       if (GamePlay.progress(newChars).percent === 100) {
         beepSolve();
+        syncWithPlayGames(); //SYNC
       }
     } else if (selection.length > 1) {
       beepSwipeCancel();
@@ -138,6 +142,7 @@ export function PagePlay() {
 
   function skipLevel() {
     setSkipped(word, level);
+    syncWithPlayGames(); //SYNC
     goNext();
   }
 

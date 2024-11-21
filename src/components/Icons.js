@@ -12,6 +12,10 @@ export function IconGithub() {
   );
 }
 
+export function IconGoogle() {
+  return (<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 3.71v16.58a.7 .7 0 0 0 1.05 .606l14.622 -8.42a.55 .55 0 0 0 0 -.953l-14.622 -8.419a.7 .7 0 0 0 -1.05 .607z" /><path d="M15 9l-10.5 11.5" /><path d="M4.5 3.5l10.5 11.5" /></svg>)
+}
+
 export function IconArrowBack(props) {
   return (
     <svg className="invertx" viewBox="0 0 512 512" fill="currentColor" height="1em" width="1em" {...props}>
@@ -109,4 +113,8 @@ export function IconShowAd(props) {
       <path d="M11 13l9 -9" /><path d="M15 4h5v5" />
     </svg>
   )
+}
+
+export function IconLoader() {
+  return <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 6l0 -3" /><path d="M16.25 7.75l2.15 -2.15" /><path d="M18 12l3 0" /><path d="M16.25 16.25l2.15 2.15" /><path d="M12 18l0 3" /><path d="M7.75 16.25l-2.15 2.15" /><path d="M6 12l-3 0" /><path d="M7.75 7.75l-2.15 -2.15" /></svg>
 }
