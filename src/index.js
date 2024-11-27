@@ -4,16 +4,19 @@ import './index.css';
 import App from './App';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import { PlayGamesContextProvider } from './components/PlayGamesContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  //<React.StrictMode>
+  <PlayGamesContextProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/*" element={<App />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  </PlayGamesContextProvider>
+  //</React.StrictMode>
 );
 
 serviceWorkerRegistration.register();

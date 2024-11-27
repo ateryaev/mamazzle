@@ -229,8 +229,8 @@ export function PagePlay() {
 
       {demoMode && !canDemo && <Block><BlockTitle>DEMO MODE</BlockTitle></Block>}
 
-      {!isEasyLevel && isNew && skippedCount < MAX_WORD_LEVELS_CAN_SKIP && <SkipLevelButton onSkip={skipLevel} />}
-      {!isEasyLevel && isNew && skippedCount >= MAX_WORD_LEVELS_CAN_SKIP && <CannotSkipLabel>too many skipped already</CannotSkipLabel>}
+      {!isEasyLevel && !solved && isNew && skippedCount < MAX_WORD_LEVELS_CAN_SKIP && <SkipLevelButton onSkip={skipLevel} />}
+      {!isEasyLevel && !solved && isNew && skippedCount >= MAX_WORD_LEVELS_CAN_SKIP && <CannotSkipLabel>too many skipped already</CannotSkipLabel>}
       {!demoMode && !canDemo && !solved && <Block><ProgressBar percent={progress} /></Block>}
 
       <div className="flex justify-center gap-2 p-2 xbg-white">

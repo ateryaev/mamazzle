@@ -6,7 +6,7 @@ import { LEVELS_PER_WORD } from "./utils/Config";
 import { getLevelsSolved } from "./utils/GameData";
 import { Blinker } from "./components/Blinker";
 import { Item, ItemAny, ItemLocked } from "./components/Board";
-import { IconBxsLockAlt } from "./components/Icons";
+import { IconAsterisk, IconBxsLockAlt, IconStar } from "./components/Icons";
 import { useState } from "react";
 import { preBeepButton } from "./utils/Beep";
 import { PlayGamesBlock } from "./components/PlayGamesBlock";
@@ -31,7 +31,7 @@ function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
       {!disabled && <div className="text-right -my-2">
         <div className="text-xs invisible -my-1">&nbsp;</div>
         {solved}/{total}
-        <div className="text-xs -my-1 opacity-50">
+        <div className="text-xs -my-1 opacity-60">
           &nbsp;
           {skipped > 0 && <>{skipped} skipped</>}
         </div>
@@ -85,17 +85,22 @@ export function PageMain() {
             total={LEVELS_PER_WORD} onClick={() => handleClick(word)} />
         ))}
 
+        <div className="text-xs text-center text-gray-400 text-opacity-60 flex justify-center">
+          <IconAsterisk />
+          <IconAsterisk />
+          <IconAsterisk />
+        </div>
         {getWords().slice(5).map((word) => (
-          <Button onClick={() => handleClick(word)} special={true} key={word}>
+          <Button onClick={() => handleClick(word)} special={!true} key={word}>
             <div className="uppercase flex-1 text-left -my-2">
               <div className="text-xs lowercase opacity-50 -my-1">&nbsp;</div>
               {word}
-              <div className="text-xs lowercase opacity-50 -my-1">season word</div>
+              <div className="text-xs lowercase opacity-60 -my-1">season word</div>
             </div>
             <div className="text-right -my-2">
               <div className="text-xs invisible -my-1">&nbsp;</div>
               {getLevelsSolved(word)}/{LEVELS_PER_WORD}
-              <div className="text-xs -my-1 opacity-50">
+              <div className="text-xs -my-1 opacity-60">
                 &nbsp;
                 {getSkippedCount(word) > 0 && <>{getSkippedCount(word)} skipped</>}
               </div>

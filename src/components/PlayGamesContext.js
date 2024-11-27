@@ -18,6 +18,7 @@ const LEADERBOARD_ID = "CgkI7pC-prceEAIQAQ";
 
 export function PlayGamesContextProvider({ children }) {
     const [state, setState] = useState(PLAYGAMES_STATE.DISABLED);
+    const [score, setScore] = useState(0);
 
     const RunNative = window.RunNative;
 
@@ -115,8 +116,12 @@ export function PlayGamesContextProvider({ children }) {
             let cloudData = null;
 
             try { cloudData = JSON.parse(cloudString); } catch (e) { }
+
             const newData = syncWithCloud(cloudData);
-            submitScore(calculateScore());
+            const scoreAfter = calculateScore();
+            submitScore(scoreAfter);
+            setScore(scoreAfter);
+
             console.log("NEW DATA TO SAVE TO CLOUD:", JSON.stringify(newData));
             save(JSON.stringify(newData), (res) => {
                 console.log("DATA SAVED TO CLOUD:", res);
@@ -134,7 +139,7 @@ export function PlayGamesContextProvider({ children }) {
     }, [state]);
 
     return (
-        <playGamesContext.Provider value={{ state, signIn, showLeaderboard, syncWithPlayGames }}>
+        <playGamesContext.Provider value={{ state, signIn, score, showLeaderboard, syncWithPlayGames }}>
             {children}
         </playGamesContext.Provider>
     );

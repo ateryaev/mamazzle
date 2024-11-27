@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
-import { IconArrowBack } from "./Icons";
+import { IconArrowBack, IconGithub } from "./Icons";
 import { RoundButton } from "./Ui";
+import { PLAYGAMES_STATE, usePlayGames } from "./PlayGamesContext";
 
 export function Window({ children, title, onBack }) {
   const scrollDiv = useRef(null);
 
+  const { state } = usePlayGames();
   useEffect(() => {
     setTimeout(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, 1);
   }, []);
@@ -26,8 +28,12 @@ export function Window({ children, title, onBack }) {
       <div ref={scrollDiv} className="flex flex-col gap-2 p-2">
         {children}
         <div className="text-xs py-2 text-gray-500 text-center">
-          Mamazzle v1.01<br />
+          Mamazzle {state === PLAYGAMES_STATE.DISABLED ? "v1.01" : "v1.1"}<br />
           Anton Teryaev, 2024<br />
+          {(false) && (<a href="https://github.com/ateryaev/mamazzle"
+            className="text-sm text-center mt-1 inline-block hover:text-gray-700" target="_blank">
+            <IconGithub />
+          </a>)}
         </div>
       </div>
     </div>
