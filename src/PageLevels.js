@@ -6,6 +6,7 @@ import { getLevelsSolved } from "./utils/GameData";
 import { LEVELS_PER_WORD } from "./utils/Config";
 import { Blinker } from "./components/Blinker";
 import { Window } from "./components/Window";
+import { flushSync } from "react-dom";
 
 const pageSize = 16;
 
@@ -73,8 +74,14 @@ export function PageLevels() {
 
   const navigate = useNavigate();
 
-  function handleBack() { navigate(-1); }
-  function handlePlay(lvl) { navigate(`./${lvl}`); }
+
+  function handlePlay(lvl) {
+    document.startViewTransition(() => {
+      flushSync(() => {
+        navigate(`./${lvl}`);
+      });
+    });
+  }
 
   function changePage(index) {
     scroller.current.children[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -86,10 +93,6 @@ export function PageLevels() {
     }
     scroller.current.children[currentPage].scrollIntoView({ block: 'nearest' });
   }, [currentPage, navigate, routerParam.word]);
-
-  // useEffect(() => {
-  //   changePage(pageIndex);
-  // }, [pageIndex]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -103,7 +106,7 @@ export function PageLevels() {
     setNextPageIndex(Math.round(nearestPage));
   }
 
-  return (<Window onBack={handleBack} title={<>{routerParam.word}</>}>
+  return (<Window title={<>{routerParam.word}</>}>
     <Block>
       {solvedCount - skippedCount < LEVELS_PER_WORD && <BlockTitle>CHOOSE A LEVEL</BlockTitle>}
       {solvedCount >= LEVELS_PER_WORD && skippedCount === 0 && <BlockAlarm>ALL LEVELS SOLVED</BlockAlarm>}

@@ -11,6 +11,7 @@ import { LEVELS_PER_WORD, MAX_WORD_LEVELS_CAN_SKIP } from "./utils/Config";
 import { beepSolve, beepSwipe, beepSwipeCancel, beepSwipeComplete } from "./utils/Beep";
 import { Selection } from "./components/Selection";
 import { usePlayGames } from "./components/PlayGamesContext";
+import { flushSync } from "react-dom";
 
 function CannotSkipLabel({ children }) {
   return (
@@ -136,9 +137,14 @@ export function PagePlay() {
 
   function handleUndo() { changeSlot(historySlot - 1); }
   function handleRedo() { changeSlot(historySlot + 1); }
-  function handleBack() { navigate(-1); }
   function restart() { changeSlot(0); }
-  function goNext() { navigate(`/play/${word}/${level + 1}`, { replace: true }); }
+  function goNext() {
+    document.startViewTransition(() => {
+      flushSync(() => {
+        navigate(`/play/${word}/${level + 1}`, { replace: true });
+      });
+    });
+  }
 
   function skipLevel() {
     setSkipped(word, level);
@@ -177,7 +183,7 @@ export function PagePlay() {
     }, (subIndex === word.length) ? 500 : (subIndex <= 1 ? 300 : 100));
 
     return () => clearTimeout(tmo);
-  }, [demoMode, demoStep, selection, solution, /*handleSelectEnd, handleSelecting, solved, word.length*/]);
+  }, [demoMode, demoStep, selection, solution]);
 
   function showMeHow() {
     setDemoStep(0);
@@ -185,7 +191,7 @@ export function PagePlay() {
   }
   return (
 
-    <Window onBack={handleBack} title={<div>
+    <Window title={<div>
       {word}
       <span className="opacity-60 px-2">/</span>{level.toString().padStart(2, '0')}
       <div className="h-0 text-sm text-right opacity-60 lowercase translate-y-[-8px]">

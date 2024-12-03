@@ -10,6 +10,7 @@ import { IconAsterisk, IconBxsLockAlt, IconStar } from "./components/Icons";
 import { useState } from "react";
 import { preBeepButton } from "./utils/Beep";
 import { PlayGamesBlock } from "./components/PlayGamesBlock";
+import { flushSync } from "react-dom";
 
 function WordButton({ word, solved, skipped, total, leftToUnlock, onClick }) {
   const disabled = leftToUnlock > 0;
@@ -50,7 +51,12 @@ export function PageMain() {
   const [showHelp, setShowHelp] = useState(false);
 
   function handleClick(word) {
-    navigate(`/play/${word}`);
+    document.startViewTransition(() => {
+      flushSync(() => {
+        navigate(`/play/${word}`);
+      });
+    });
+
   }
 
   function handleSoundSwitch() {
